@@ -23,6 +23,9 @@ public class PlayerController : NetworkBehaviour
     {
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
+        //playerCamera = GameObject.Find("PlayerCamera").GetComponent<Camera>();
+        //playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + cameraYOffset, playerCamera.transform.position.z);
+       // playerCamera.transform.SetParent(transform);
     }
 
 
@@ -81,22 +84,17 @@ public class PlayerController : NetworkBehaviour
             return (success: false, position: Vector3.zero);
         }
     }
-
+   
     public override void OnStartClient()
     {
-        base.OnStartClient();
-
+        base.OnStartClient();        
         if (base.IsOwner)
         {
-            playerCamera = Camera.main;
-            playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + cameraYOffset, playerCamera.transform.position.z);
-            playerCamera.transform.SetParent(transform);
+           
         }
         else
         {
             this.enabled = false;
         }
-
-
     }
 }
