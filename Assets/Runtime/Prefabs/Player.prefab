@@ -785,6 +785,7 @@ GameObject:
   - component: {fileID: 1991091016699932476}
   - component: {fileID: 4278579868224153239}
   - component: {fileID: 4715168063906836440}
+  - component: {fileID: 5896555033899874148}
   m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
@@ -876,7 +877,7 @@ MonoBehaviour:
     m_Bits: 64
   rb: {fileID: -5759660471522862659}
   movementSpeed: 300
-  rotationSpeed: 200
+  rotationSpeed: 100
   model: {fileID: 1541610030938574282}
   cameraYOffset: 45
 --- !u!114 &4278579868224153239
@@ -976,6 +977,21 @@ MonoBehaviour:
     X: 0
     Y: 0
     Z: 0
+--- !u!114 &5896555033899874148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6103732200358392907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c71fd7f855ec523429999fc4e14a1928, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _overrideType: 2
+  _updateHostVisibility: 1
+  _observerConditions: []
 --- !u!1 &6103732200383164038
 GameObject:
   m_ObjectHideFlags: 0

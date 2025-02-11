@@ -102,9 +102,9 @@ namespace FishNet.Component.Spawning
             Quaternion rotation;
             SetSpawn(_playerPrefab.transform, out position, out rotation);
 
-            NetworkObject nob = _networkManager.GetPooledInstantiated(_playerPrefab, position, rotation, true);
+            NetworkObject nob = _networkManager.GetPooledInstantiated(_playerPrefab, position, rotation, true);            
             _networkManager.ServerManager.Spawn(nob, conn);
-
+            
             //If there are no global scenes 
             if (_addToDefaultScene)
                 _networkManager.SceneManager.AddOwnerToDefaultScene(nob);

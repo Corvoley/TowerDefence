@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] public Camera mainPlayerCamera;
 
+    [SerializeField] public Transform spawnPoint;
+
     
     private void Awake()
     {

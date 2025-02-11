@@ -21,14 +21,22 @@ public class PlayerController : NetworkBehaviour
     private Camera playerCamera;
     private void Awake()
     {
+
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
-        //playerCamera = GameObject.Find("PlayerCamera").GetComponent<Camera>();
-        //playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + cameraYOffset, playerCamera.transform.position.z);
-       // playerCamera.transform.SetParent(transform);
+
     }
 
+    public void SetupPlayer()
+    {
+        Debug.Log("SetupPlayer foi chamado");
+        playerCamera = GameObject.Find("PlayerCamera").GetComponent<Camera>();
+        playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + cameraYOffset, playerCamera.transform.position.z);
+        playerCamera.transform.SetParent(transform);
+        transform.position = GameManager.instance.spawnPoint.position;
 
+
+    }
     private void Update()
     {
         InputHandler();
@@ -84,13 +92,14 @@ public class PlayerController : NetworkBehaviour
             return (success: false, position: Vector3.zero);
         }
     }
-   
+
     public override void OnStartClient()
     {
-        base.OnStartClient();        
+        Debug.Log("OnStartClient Foi Chamado");
+        base.OnStartClient();
         if (base.IsOwner)
         {
-           
+            SetupPlayer();
         }
         else
         {
