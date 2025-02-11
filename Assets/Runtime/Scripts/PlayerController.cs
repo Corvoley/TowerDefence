@@ -1,10 +1,17 @@
+using FishNet.Component.Animating;
 using FishNet.Object;
+using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using static UnityEngine.GraphicsBuffer;
 
 public class PlayerController : NetworkBehaviour
 {
+    [SerializeField] private Animator animator;
+    [SerializeField] private NetworkAnimator networkAnimator;
+
     [SerializeField] private LayerMask groundMask;
+
 
     [SerializeField] private Rigidbody rb;
     [SerializeField] private float movementSpeed;
@@ -25,7 +32,11 @@ public class PlayerController : NetworkBehaviour
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
 
+        playerInputActions.Player.Attack.performed += Attack;
+
     }
+
+    
 
     public void SetupPlayer()
     {
@@ -53,6 +64,11 @@ public class PlayerController : NetworkBehaviour
         rb.AddForce(force);
 
     }
+    private void Attack(InputAction.CallbackContext context)
+    {
+        networkAnimator.SetTrigger("Attack");
+    }
+
     private void InputHandler()
     {
         inputVector = playerInputActions.Player.Move.ReadValue<Vector2>();

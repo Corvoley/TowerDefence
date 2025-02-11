@@ -5,6 +5,7 @@ using FishNet.Managing;
 using FishNet.Object;
 using System;
 using UnityEngine;
+using static UnityEngine.Rendering.GPUSort;
 
 public class PlayerClientManager : NetworkBehaviour
 {
@@ -14,8 +15,21 @@ public class PlayerClientManager : NetworkBehaviour
     private void Awake()
     {
         UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneManager_sceneLoaded;
+        
     }
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameScene")
+        {
+            if (IsOwner)
+            {
+                InstanceFinder.SceneManager.AddConnectionToScene(LocalConnection, UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+                SpawnPlayer(LocalConnection);
 
+            }
+        }
+    }
     private void SceneManager_sceneLoaded(UnityEngine.SceneManagement.Scene arg0, UnityEngine.SceneManagement.LoadSceneMode arg1)
     {
         if (arg0.name == "GameScene")
