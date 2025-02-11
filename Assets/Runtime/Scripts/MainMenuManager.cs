@@ -63,7 +63,10 @@ public class MainMenuManager : MonoBehaviour
         instance.lobbyIDText.text = BootstrapManager.CurrentLobbyID.ToString();
         instance.OpenLobbyScreen();
     }
-
+    public void CopyText()
+    {
+        GUIUtility.systemCopyBuffer = lobbyIDText.text;
+    }
     private void ClosseAllScreens()
     {
         menuScreen.SetActive(false);

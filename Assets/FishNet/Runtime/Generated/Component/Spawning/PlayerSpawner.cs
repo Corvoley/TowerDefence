@@ -109,6 +109,7 @@ namespace FishNet.Component.Spawning
             if (_addToDefaultScene)
                 _networkManager.SceneManager.AddOwnerToDefaultScene(nob);
 
+
             OnSpawned?.Invoke(nob);
         }
 

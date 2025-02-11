@@ -13,15 +13,19 @@ public class PlayerClientManager : NetworkBehaviour
 
     private void Awake()
     {
-        UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneManager_sceneLoaded;      
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneManager_sceneLoaded;
     }
 
     private void SceneManager_sceneLoaded(UnityEngine.SceneManagement.Scene arg0, UnityEngine.SceneManagement.LoadSceneMode arg1)
     {
         if (arg0.name == "GameScene")
         {
-            if(IsOwner)
-            SpawnPlayer(LocalConnection);
+            if (IsOwner)
+            {
+                InstanceFinder.SceneManager.AddConnectionToScene(LocalConnection, arg0);                
+                SpawnPlayer(LocalConnection);
+
+            }
         }
     }
 
@@ -29,7 +33,7 @@ public class PlayerClientManager : NetworkBehaviour
     private void SpawnPlayer(NetworkConnection conn)
     {
         GameObject obj = Instantiate(playerPrefab, transform.position, Quaternion.identity);
-        Spawn(obj, conn);      
+        Spawn(obj, conn);
     }
 
 
