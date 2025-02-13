@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7027133428597180869}
   - component: {fileID: 3773489019332700697}
   - component: {fileID: 2266314123107356852}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Client
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50,7 +50,6 @@ MonoBehaviour:
   <PredictedSpawn>k__BackingField: {fileID: 0}
   <PredictedOwner>k__BackingField: {fileID: 0}
   NetworkBehaviours:
-  - {fileID: 0}
   - {fileID: 2266314123107356852}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
@@ -98,8 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d6d8cd0a4530324a9c83b094a394dff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 1
+  _componentIndexCache: 0
   _addedNetworkObject: {fileID: 3773489019332700697}
   _networkObjectCache: {fileID: 3773489019332700697}
   playerPrefab: {fileID: 6103732200358392907, guid: 62f7985dcc8bcd14e89e20f4aecc6b35, type: 3}
-  Spawns: []

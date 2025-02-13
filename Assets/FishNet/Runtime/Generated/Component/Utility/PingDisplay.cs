@@ -56,7 +56,7 @@ namespace FishNet.Component.Utility
                 return;
 
             _style.normal.textColor = _color;
-            _style.fontSize = 15;
+            _style.fontSize = 20;
             float width = 85f;
             float height = 15f;
             float edge = 10f;

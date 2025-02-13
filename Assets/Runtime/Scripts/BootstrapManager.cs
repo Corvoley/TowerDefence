@@ -25,8 +25,9 @@ public class BootstrapManager : MonoBehaviour
     {
         LobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
         JoinRequest = Callback<GameLobbyJoinRequested_t>.Create(OnJoinRequest);
-        LobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);        
-        
+        LobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
+
+
     }
     public void OpenMenuScene()
     {
@@ -67,6 +68,8 @@ public class BootstrapManager : MonoBehaviour
 
         fishySteamworks.SetClientAddress(SteamMatchmaking.GetLobbyData(new CSteamID(CurrentLobbyID), "HostAddress"));
         fishySteamworks.StartConnection(false);
+
+        
     }
     public static void JoinByID(CSteamID steamID)
     {

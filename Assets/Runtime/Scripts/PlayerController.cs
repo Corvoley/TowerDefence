@@ -1,16 +1,28 @@
+using FishNet.CodeGenerating;
 using FishNet.Component.Animating;
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
+using Steamworks;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEngine.GraphicsBuffer;
 
 public class PlayerController : NetworkBehaviour
 {
+
+    public Action OnSetupFinished;
     [SerializeField] private Animator animator;
     [SerializeField] private NetworkAnimator networkAnimator;
 
     [SerializeField] private LayerMask groundMask;
+    [SerializeField] private LayerMask enemyMask;
+
+    [SerializeField] private Vector3 attackExtends;
+    [SerializeField] private Transform attackPoint;
+    [SerializeField] private float attackRate;
+    private float attackCooldown;
+    private bool isAttacking;
 
 
     [SerializeField] private Rigidbody rb;
@@ -18,6 +30,10 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float rotationSpeed;
 
     [SerializeField] private GameObject model;
+
+
+    [SerializeField] private TextMeshProUGUI usernameText;
+
 
 
     private Vector2 inputVector;
@@ -31,12 +47,11 @@ public class PlayerController : NetworkBehaviour
 
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
-
         playerInputActions.Player.Attack.performed += Attack;
 
     }
 
-    
+
 
     public void SetupPlayer()
     {
@@ -45,8 +60,11 @@ public class PlayerController : NetworkBehaviour
         playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + cameraYOffset, playerCamera.transform.position.z);
         playerCamera.transform.SetParent(transform);
         transform.position = GameManager.instance.spawnPoint.position;
-
-
+    }   
+ 
+    public void SetUsername(string username)
+    {
+        usernameText.text = username;
     }
     private void Update()
     {
@@ -57,6 +75,7 @@ public class PlayerController : NetworkBehaviour
     {
         Movement();
     }
+
     private void Movement()
     {
 
@@ -66,7 +85,21 @@ public class PlayerController : NetworkBehaviour
     }
     private void Attack(InputAction.CallbackContext context)
     {
-        networkAnimator.SetTrigger("Attack");
+
+        if (Time.time >= attackCooldown)
+        {
+            isAttacking = true;
+            Collider[] hit = Physics.OverlapBox(attackPoint.position, attackExtends, attackPoint.rotation, enemyMask);
+            networkAnimator.SetTrigger("Attack");
+            //networkAnimator.SetTrigger("Attack");
+            foreach (Collider enemy in hit)
+            {
+                enemy.GetComponent<HealthController>().DealDamage(25);
+            }
+            attackCooldown = Time.time + 1f / attackRate;
+            isAttacking = false;
+        }
+
     }
 
     private void InputHandler()
@@ -121,5 +154,16 @@ public class PlayerController : NetworkBehaviour
         {
             this.enabled = false;
         }
+    }
+
+
+
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.matrix = attackPoint.localToWorldMatrix;
+        Gizmos.DrawWireCube(Vector3.zero, attackExtends * 2);
+
+
     }
 }

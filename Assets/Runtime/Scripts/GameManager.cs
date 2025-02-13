@@ -29,4 +29,10 @@ public class GameManager : NetworkBehaviour
         GameObject obj = Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
         Spawn(obj);
     }
+    [ServerRpc(RequireOwnership = false)]
+
+    public void DespawnEnemy(GameObject obj)
+    {
+        Despawn(obj);
+    }
 }
