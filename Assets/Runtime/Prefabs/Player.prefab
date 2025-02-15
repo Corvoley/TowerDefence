@@ -1003,7 +1003,7 @@ GameObject:
   - component: {fileID: 5896555033899874148}
   - component: {fileID: 9024306885322223493}
   - component: {fileID: 8981886898156495223}
-  m_Layer: 10
+  m_Layer: 9
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -1052,7 +1052,7 @@ MonoBehaviour:
     m_Bits: 256
   attackExtends: {x: 4, y: 1, z: 3}
   attackPoint: {fileID: 4623266782708872223}
-  attackRate: 0.75
+  attackRate: 1.5
   rb: {fileID: -5759660471522862659}
   movementSpeed: 300
   rotationSpeed: 100

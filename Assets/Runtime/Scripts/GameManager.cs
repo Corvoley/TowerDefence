@@ -1,4 +1,6 @@
 using FishNet.Object;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameManager : NetworkBehaviour
@@ -7,8 +9,14 @@ public class GameManager : NetworkBehaviour
 
     [SerializeField] public Camera mainPlayerCamera;
 
-    [SerializeField] public Transform spawnPoint;
+    [SerializeField] public Transform[] spawnPoint;
+    [SerializeField] public Transform playerSpawnPoint;
+    [SerializeField] public Transform baseTransform;
     [SerializeField] public GameObject enemyPrefab;
+
+
+    [SerializeField] public List<Transform> enemiesTransformList = new List<Transform>();
+    [SerializeField] public List<Transform> alliesTransformList = new List<Transform>();    
 
 
     private void Awake()
@@ -26,8 +34,11 @@ public class GameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void SpawnEnemy()
     {
-        GameObject obj = Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
+        var randomPoint = Random.Range(0, spawnPoint.Length);
+        GameObject obj = Instantiate(enemyPrefab, spawnPoint[randomPoint].position, Quaternion.identity);
         Spawn(obj);
+        obj.GetComponent<EnemyController>().defaultTarget = instance.baseTransform;
+        
     }
     [ServerRpc(RequireOwnership = false)]
 

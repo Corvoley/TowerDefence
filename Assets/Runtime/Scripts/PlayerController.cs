@@ -59,7 +59,8 @@ public class PlayerController : NetworkBehaviour
         playerCamera = GameObject.Find("PlayerCamera").GetComponent<Camera>();
         playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + cameraYOffset, playerCamera.transform.position.z);
         playerCamera.transform.SetParent(transform);
-        transform.position = GameManager.instance.spawnPoint.position;
+        transform.position = GameManager.instance.playerSpawnPoint.position;
+        GameManager.instance.alliesTransformList.Add(transform);
     }   
  
     public void SetUsername(string username)
