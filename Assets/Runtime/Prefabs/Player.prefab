@@ -354,8 +354,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2269548440683186457}
-  - component: {fileID: 2149049955654217347}
-  - component: {fileID: 8337628342889593446}
   m_Layer: 0
   m_Name: Sword
   m_TagString: Untagged
@@ -382,40 +380,6 @@ Transform:
   - {fileID: 6903710542838871432}
   m_Father: {fileID: 7281666368565201469}
   m_LocalEulerAnglesHint: {x: -88.027, y: 0, z: 0}
---- !u!95 &2149049955654217347
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2047789129400518432}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!114 &8337628342889593446
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2047789129400518432}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c615e70053931243b95be3c03e9f5f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2420862640112047048
 GameObject:
   m_ObjectHideFlags: 0
@@ -586,7 +550,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1155788989523099226}
-  - component: {fileID: 8761509357598291306}
   m_Layer: 0
   m_Name: Shield
   m_TagString: Untagged
@@ -611,28 +574,6 @@ Transform:
   - {fileID: 9085847794405427210}
   m_Father: {fileID: 7281666368565201469}
   m_LocalEulerAnglesHint: {x: 0, y: 58.457, z: 0}
---- !u!95 &8761509357598291306
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2939070978423858110}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &3424327590433639965
 GameObject:
   m_ObjectHideFlags: 0
@@ -699,6 +640,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c615e70053931243b95be3c03e9f5f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CanFriendlyFire: 0
+  damage: 10
+  nameTag: 
 --- !u!1 &4712724636444122818
 GameObject:
   m_ObjectHideFlags: 0
@@ -1127,17 +1071,12 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 64
-  enemyMask:
-    serializedVersion: 2
-    m_Bits: 256
-  attackExtends: {x: 4, y: 1, z: 3}
-  attackPoint: {fileID: 4623266782708872223}
-  attackCooldown: 1
   rb: {fileID: -5759660471522862659}
   movementSpeed: 300
   rotationSpeed: 100
   model: {fileID: 1541610030938574282}
   usernameText: {fileID: 8246334067060073583}
+  attackCooldown: 1
   attackSpeedMultiplier: 1
   attackStartPercent: 0.5
   attackDurationPercent: 0.3

@@ -19,13 +19,6 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private NetworkAnimator networkAnimator;
 
     [SerializeField] private LayerMask groundMask;
-    [SerializeField] private LayerMask enemyMask;
-
-    [SerializeField] private Vector3 attackExtends;
-    [SerializeField] private Transform attackPoint;
-    [SerializeField] private float attackCooldown;
-    private float attackTimer;
-    private bool isAttacking;
 
 
     [SerializeField] private Rigidbody rb;
@@ -37,12 +30,12 @@ public class PlayerController : NetworkBehaviour
 
     [SerializeField] private TextMeshProUGUI usernameText;
 
+    [SerializeField] private float attackCooldown;
     [SerializeField] private float attackSpeedMultiplier;
     [SerializeField] private float attackStartPercent;
     [SerializeField] private float attackDurationPercent;
     [SerializeField] private Collider weaponCollider;
-
-    private Task attackTask;
+    private float attackTimer;
     private float attackClipDuration;
 
 
@@ -117,48 +110,23 @@ public class PlayerController : NetworkBehaviour
         
         if (Time.time >= attackTimer)
         {
-
-            Debug.Log("Attack iniciado");
-            /*isAttacking = true;
-            Collider[] hit = Physics.OverlapBox(attackPoint.position, attackExtends, attackPoint.rotation, enemyMask);
-            networkAnimator.SetTrigger("Attack");
-            
-            foreach (Collider enemy in hit)
-            {
-                enemy.GetComponent<HealthController>().DealDamage(25);
-            }            
-            isAttacking = false;*/
-
-            
-            attackTimer = Time.time + attackCooldown + (attackClipDuration / attackSpeedMultiplier);
-            Debug.Log($"Attack cooldown: {attackCooldown + (attackClipDuration / attackSpeedMultiplier)}");
-            await AttackTask(attackStartPercent * (attackClipDuration / attackSpeedMultiplier), attackDurationPercent * (attackClipDuration / attackSpeedMultiplier), weaponCollider);
-
+            Debug.Log("Attack!!!!");
+            attackTimer = Time.time + attackCooldown + (attackClipDuration / attackSpeedMultiplier);           
+            await AttackTask(attackStartPercent * (attackClipDuration / attackSpeedMultiplier), attackDurationPercent * (attackClipDuration / attackSpeedMultiplier), weaponCollider);            
         }
-
     }
-
     private async Task AttackTask(float start, float duration, Collider weaponCollider)
     {
-        //start attack
-        // run animation
         networkAnimator.SetTrigger("Attack");
         animator.SetFloat("AttackSpeedMultiplier", attackSpeedMultiplier);
-        //Debug.Log("Attack clip time: " + attackClipDuration / attackSpeedMultiplier);
-        //Debug.Log("Start time: "+ start);
         await Awaitable.WaitForSecondsAsync(start);
 
         weaponCollider.enabled = true;
-        //activate collider
-        //Debug.Log("Duration time: " + duration);
         await Awaitable.WaitForSecondsAsync(duration);
 
         weaponCollider.enabled = false;
-        //deactivate collider
         var end = (attackClipDuration / attackSpeedMultiplier ) - (start + duration) ;
-        //Debug.Log("End time: " + end);
         await Awaitable.WaitForSecondsAsync(end);
-
     }
 
 
@@ -216,14 +184,4 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-
-
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.matrix = attackPoint.localToWorldMatrix;
-        Gizmos.DrawWireCube(Vector3.zero, attackExtends * 2);
-
-
-    }
 }

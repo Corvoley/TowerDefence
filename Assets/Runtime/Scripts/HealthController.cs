@@ -68,6 +68,7 @@ public class HealthController : NetworkBehaviour
             {
                 UpdateHealth(this, health);
             }
+            Debug.Log("Damaged!!!!");
             //OnHealthChanged?.Invoke();
         }
     }

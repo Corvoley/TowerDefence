@@ -3,6 +3,7 @@ using FishNet.Object;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -22,13 +23,18 @@ public class EnemyController : NetworkBehaviour
     [SerializeField] private float rotationSpeed;
     [SerializeField] private float aggroDistance;
     [SerializeField] private float attackDistance;
-    [SerializeField] private float attackRate;
-    private float attackCooldown;
-    [SerializeField] private LayerMask attackableMask;
-    [SerializeField] private Vector3 attackExtends;
-    [SerializeField] public Transform attackPoint;
+
     [SerializeField] public Transform defaultTarget;
     [SerializeField] private Transform currentTarget;
+
+
+    [SerializeField] private float attackCooldown;
+    [SerializeField] private float attackSpeedMultiplier;
+    [SerializeField] private float attackStartPercent;
+    [SerializeField] private float attackDurationPercent;
+    [SerializeField] private Collider weaponCollider;
+    private float attackTimer;
+    [SerializeField] private float attackClipDuration;
 
 
     [SerializeField] private float refreshRateAI = 0.2f;
@@ -39,6 +45,7 @@ public class EnemyController : NetworkBehaviour
     private List<Transform> positionsList = new List<Transform>();
     private NavMeshAgent agent;
     private NetworkAnimator networkAnimator;
+    private Animator animator;
 
 
     public EnemyAIState currentEnemyState;
@@ -48,12 +55,14 @@ public class EnemyController : NetworkBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         networkAnimator = GetComponent<NetworkAnimator>();
+        animator = GetComponent<Animator>();
     }
     public override void OnStartClient()
     {
         
         base.OnStartClient();
         SetupEnemy();
+        FillAttackAnimationInfo();
     }
 
 
@@ -97,14 +106,26 @@ public class EnemyController : NetworkBehaviour
         
         
     }
+    private void FillAttackAnimationInfo()
+    {
+
+        foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips)
+        {
+            if (clip.name == "AttackAxe")
+            {
+                attackClipDuration = clip.length;
+            }
+        }
+
+
+    }
     private void AttackingStateHandler()
     {
         agent.ResetPath();
         if (Vector3.Distance(transform.position, currentTarget.position) > attackDistance)
         {
             currentEnemyState = EnemyAIState.Walking;
-        }
-        
+        }        
         Attack();
     }
 
@@ -140,24 +161,32 @@ public class EnemyController : NetworkBehaviour
 
     }
 
-    private void Attack()
+    private async void Attack()
     {
 
-        if (Time.time >= attackCooldown)
+        if (Time.time >= attackTimer)
         {
-            //isAttacking = true;
-            Collider[] hit = Physics.OverlapBox(attackPoint.position, attackExtends, attackPoint.rotation, attackableMask);
-            networkAnimator.SetTrigger("Attack");
-            //networkAnimator.SetTrigger("Attack");
-            foreach (Collider enemy in hit)
-            {
-                enemy.GetComponent<HealthController>().DealDamage(5);
-            }
-            attackCooldown = Time.time + 1f / attackRate;
-            //isAttacking = false;
+            attackTimer = Time.time + attackCooldown + (attackClipDuration / attackSpeedMultiplier);
+            await AttackTask(attackStartPercent * (attackClipDuration / attackSpeedMultiplier), attackDurationPercent * (attackClipDuration / attackSpeedMultiplier), weaponCollider);
         }
-
     }
+    private async Task AttackTask(float start, float duration, Collider weaponCollider)
+    {
+        
+        networkAnimator.SetTrigger("Attack");
+        animator.SetFloat("AttackSpeedMultiplier", attackSpeedMultiplier);
+        await Awaitable.WaitForSecondsAsync(start);
+
+        weaponCollider.enabled = true;
+        await Awaitable.WaitForSecondsAsync(duration);
+
+        weaponCollider.enabled = false;
+        var end = (attackClipDuration / attackSpeedMultiplier) - (start + duration);
+        await Awaitable.WaitForSecondsAsync(end);
+
+        // parar a task quando destruir o inimigo
+    }
+
     private Transform GetClosestTarget(List<Transform> targetList)
     {
         if (targetList.Count == 0) return null;
@@ -199,7 +228,6 @@ public class EnemyController : NetworkBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, aggroDistance);
 
-        Gizmos.matrix = attackPoint.localToWorldMatrix;
-        Gizmos.DrawWireCube(Vector3.zero, attackExtends * 2);
+    
     }
 }
