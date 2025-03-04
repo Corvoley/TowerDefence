@@ -1,5 +1,6 @@
 using FishNet.Component.Animating;
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -57,6 +58,7 @@ public class EnemyController : NetworkBehaviour
         networkAnimator = GetComponent<NetworkAnimator>();
         animator = GetComponent<Animator>();
     }
+
     public override void OnStartClient()
     {
         
@@ -131,7 +133,7 @@ public class EnemyController : NetworkBehaviour
 
     private void WalkingStateHandler()
     {
-        Transform closestTarget = GetClosestTarget(GameManager.instance.alliesTransformList);
+        Transform closestTarget = GetClosestTarget(GameManager.Instance.alliesNetworkObjectList);
         if (closestTarget != null)
         {
             currentTarget = closestTarget;
@@ -187,7 +189,7 @@ public class EnemyController : NetworkBehaviour
         // parar a task quando destruir o inimigo
     }
 
-    private Transform GetClosestTarget(List<Transform> targetList)
+    private Transform GetClosestTarget(SyncList<NetworkObject> targetList)
     {
         if (targetList.Count == 0) return null;
 
@@ -196,13 +198,13 @@ public class EnemyController : NetworkBehaviour
 
         for (int i = 0; i < targetList.Count; i++)
         {
-            float distance = Vector3.Distance(transform.position, targetList[i].position);
+            float distance = Vector3.Distance(transform.position, targetList[i].transform.position);
             if (distance <= aggroDistance)
             {
                 if (distance < closestDistance)
                 {
                     closestDistance = distance;
-                    closestTarget = targetList[i];
+                    closestTarget = targetList[i].transform;
                 }
             }
 

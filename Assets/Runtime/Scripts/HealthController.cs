@@ -62,7 +62,7 @@ public class HealthController : NetworkBehaviour
             health = Mathf.Clamp(health, 0, maxHealth);
             if (health <= 0)
             {
-                GameManager.instance.DespawnEnemy(this.gameObject);
+                GameManager.Instance.DespawnEnemy(this.gameObject);
             }
             else
             {

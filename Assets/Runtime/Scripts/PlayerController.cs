@@ -64,8 +64,8 @@ public class PlayerController : NetworkBehaviour
         playerCamera = GameObject.Find("PlayerCamera").GetComponent<Camera>();
         playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + cameraYOffset, playerCamera.transform.position.z);
         playerCamera.transform.SetParent(transform);
-        transform.position = GameManager.instance.playerSpawnPoint.position;
-        GameManager.instance.alliesTransformList.Add(transform);
+        transform.position = GameManager.Instance.playerSpawnPoint.position;
+
 
         FillAttackAnimationInfo();
     }
@@ -94,12 +94,12 @@ public class PlayerController : NetworkBehaviour
 
     private void FillAttackAnimationInfo()
     {
-       
+
         foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips)
         {
             if (clip.name == "Attack")
             {
-                attackClipDuration =  clip.length;
+                attackClipDuration = clip.length;
             }
         }
 
@@ -107,12 +107,12 @@ public class PlayerController : NetworkBehaviour
     }
     private async void Attack(InputAction.CallbackContext context)
     {
-        
+
         if (Time.time >= attackTimer)
         {
             Debug.Log("Attack!!!!");
-            attackTimer = Time.time + attackCooldown + (attackClipDuration / attackSpeedMultiplier);           
-            await AttackTask(attackStartPercent * (attackClipDuration / attackSpeedMultiplier), attackDurationPercent * (attackClipDuration / attackSpeedMultiplier), weaponCollider);            
+            attackTimer = Time.time + attackCooldown + (attackClipDuration / attackSpeedMultiplier);
+            await AttackTask(attackStartPercent * (attackClipDuration / attackSpeedMultiplier), attackDurationPercent * (attackClipDuration / attackSpeedMultiplier), weaponCollider);
         }
     }
     private async Task AttackTask(float start, float duration, Collider weaponCollider)
@@ -125,7 +125,7 @@ public class PlayerController : NetworkBehaviour
         await Awaitable.WaitForSecondsAsync(duration);
 
         weaponCollider.enabled = false;
-        var end = (attackClipDuration / attackSpeedMultiplier ) - (start + duration) ;
+        var end = (attackClipDuration / attackSpeedMultiplier) - (start + duration);
         await Awaitable.WaitForSecondsAsync(end);
     }
 
@@ -174,14 +174,15 @@ public class PlayerController : NetworkBehaviour
     {
         Debug.Log("OnStartClient Foi Chamado");
         base.OnStartClient();
+
         if (base.IsOwner)
         {
             SetupPlayer();
+            GameManager.Instance.AddPlayerToList(this.NetworkObject);
         }
         else
         {
             this.enabled = false;
         }
     }
-
 }
