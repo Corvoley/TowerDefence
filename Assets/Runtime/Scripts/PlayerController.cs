@@ -8,8 +8,12 @@ using System;
 using System.Collections;
 using System.Threading.Tasks;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
+using static UnityEngine.GraphicsBuffer;
+using static UnityEngine.ParticleSystem;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -35,28 +39,41 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float attackStartPercent;
     [SerializeField] private float attackDurationPercent;
     [SerializeField] private Collider weaponCollider;
+    [SerializeField] private ParticleSystem particle;
     private float attackTimer;
     private float attackClipDuration;
 
 
 
     private Vector2 inputVector;
+    private bool canRotate = true;
     private PlayerInputActions playerInputActions;
 
     [SerializeField] private float cameraYOffset;
 
     private Camera playerCamera;
-    private void Awake()
+
+    public override async void OnStartClient()
     {
-
-        playerInputActions = new PlayerInputActions();
-        playerInputActions.Player.Enable();
-        playerInputActions.Player.Attack.performed += Attack;
-        weaponCollider.enabled = false;
-
+        Debug.Log("OnStartClient Foi Chamado");
+        base.OnStartClient();
+        if (base.IsServerInitialized)
+        {
+            await AddPlayerToList();
+        }
+        if (base.IsOwner)
+        {
+            playerInputActions = new PlayerInputActions();
+            playerInputActions.Player.Enable();
+            playerInputActions.Player.Attack.performed += Attack;
+            weaponCollider.enabled = false;
+            SetupPlayer();
+        }
+        else
+        {
+            this.enabled = false;
+        }
     }
-
-
 
     public void SetupPlayer()
     {
@@ -73,6 +90,11 @@ public class PlayerController : NetworkBehaviour
     public void SetUsername(string username)
     {
         usernameText.text = username;
+    }
+    private async Task AddPlayerToList()
+    {
+        await Awaitable.WaitForSecondsAsync(0.5f);
+        GameManager.Instance.AddPlayerToList(this.NetworkObject);
     }
     private void Update()
     {
@@ -117,29 +139,37 @@ public class PlayerController : NetworkBehaviour
     }
     private async Task AttackTask(float start, float duration, Collider weaponCollider)
     {
+        canRotate = false;
         networkAnimator.SetTrigger("Attack");
         animator.SetFloat("AttackSpeedMultiplier", attackSpeedMultiplier);
         await Awaitable.WaitForSecondsAsync(start);
-
+        particle.Play();
         weaponCollider.enabled = true;
         await Awaitable.WaitForSecondsAsync(duration);
-
+        particle.Stop();
         weaponCollider.enabled = false;
         var end = (attackClipDuration / attackSpeedMultiplier) - (start + duration);
         await Awaitable.WaitForSecondsAsync(end);
+        canRotate = true;
     }
 
 
     private void InputHandler()
     {
-        inputVector = playerInputActions.Player.Move.ReadValue<Vector2>();
+        if (playerInputActions != null)
+        {
+
+            inputVector = playerInputActions.Player.Move.ReadValue<Vector2>();
+        }
     }
 
     private void RotateToMousePosition()
     {
+        if (!canRotate) return;
         var (success, position) = GetMousePosition();
         if (success)
         {
+            /*
             // Calculate the direction
             var direction = position - model.transform.position;
 
@@ -148,7 +178,14 @@ public class PlayerController : NetworkBehaviour
             direction.y = 0;
 
             // Make the transform look in the direction.
-            model.transform.forward = direction;
+            model.transform.forward = direction;*/
+
+
+            Vector3 targetDirection = position - model.transform.position;
+            targetDirection.y = 0;
+            float singleStep = rotationSpeed * Time.deltaTime;
+            Vector3 newDirection = Vector3.RotateTowards(model.transform.forward, targetDirection, singleStep, 0.0f);
+            model.transform.rotation = Quaternion.LookRotation(newDirection);
         }
     }
 
@@ -170,19 +207,6 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    public override void OnStartClient()
-    {
-        Debug.Log("OnStartClient Foi Chamado");
-        base.OnStartClient();
 
-        if (base.IsOwner)
-        {
-            SetupPlayer();
-            GameManager.Instance.AddPlayerToList(this.NetworkObject);
-        }
-        else
-        {
-            this.enabled = false;
-        }
-    }
+
 }

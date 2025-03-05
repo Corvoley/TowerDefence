@@ -27,34 +27,27 @@ public class HealthController : NetworkBehaviour
     {
         if (asServer || base.IsClientOnlyStarted)
         {
-
-            UpdateHealthBar(next);
+            if (IsServerInitialized)
+                UpdateHealthBar(next);
         }
     }
 
     public override void OnStartClient()
     {
+        base.OnStartClient();
         health.OnChange += Health_OnChange;
         SetCanBeDamaged(this, true);
         if (!isPlayer) return;
-        base.OnStartClient();
-        if (!base.IsOwner) this.enabled = false;
+        if (!base.IsOwner)
+        {
+            this.enabled = false;
+        }
+
     }
 
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            DealDamage(10);
-        }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            HealDamage(10);
-        }
-    }
     public void DealDamage(float amount)
-    {
+    {        
         if (canBeDamaged.Value)
         {
             var health = this.health.Value;
@@ -74,12 +67,13 @@ public class HealthController : NetworkBehaviour
     }
     [ObserversRpc]
     private void UpdateHealthBar(float amount)
-    {         
+    {
+
         healthSlider.fillAmount = amount / maxHealth;
     }
 
     public void HealDamage(float amount)
-    {
+    {       
         var health = this.health.Value;
         health += amount;
         health = Mathf.Clamp(health, 0, maxHealth);
@@ -89,7 +83,7 @@ public class HealthController : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void UpdateHealth(HealthController script, float value) {script.health.Value = value; }
+    public void UpdateHealth(HealthController script, float value) { script.health.Value = value; }
     [ServerRpc(RequireOwnership = false)]
     public void SetCanBeDamaged(HealthController script, bool value) => script.canBeDamaged.Value = value;
 

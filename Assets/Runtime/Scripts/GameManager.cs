@@ -59,7 +59,8 @@ public class GameManager : NetworkBehaviour
 
     public void AddPlayerToList(NetworkObject player)
     {
-        if (!IsServerInitialized) return;
+
+        if (!base.IsServerInitialized) return;
         if (!alliesNetworkObjectList.Contains(player))
         {
             alliesNetworkObjectList.Add(player);

@@ -778,8 +778,8 @@ MonoBehaviour:
   attackDistance: 7
   defaultTarget: {fileID: 0}
   currentTarget: {fileID: 0}
-  attackCooldown: 2
-  attackSpeedMultiplier: 0.5
+  attackCooldown: 1
+  attackSpeedMultiplier: 1
   attackStartPercent: 0.5
   attackDurationPercent: 0.5
   weaponCollider: {fileID: 1341170114171743862}
