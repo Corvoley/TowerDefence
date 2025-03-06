@@ -29,7 +29,8 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float movementSpeed;
     [SerializeField] private float rotationSpeed;
 
-    [SerializeField] private GameObject model;
+    [SerializeField] private GameObject modelObj;
+    [SerializeField] private GameObject canvasObj;
 
 
     [SerializeField] private TextMeshProUGUI usernameText;
@@ -43,8 +44,7 @@ public class PlayerController : NetworkBehaviour
     private float attackTimer;
     private float attackClipDuration;
 
-
-
+    
     private Vector2 inputVector;
     private bool canRotate = true;
     private PlayerInputActions playerInputActions;
@@ -67,7 +67,7 @@ public class PlayerController : NetworkBehaviour
             playerInputActions.Player.Enable();
             playerInputActions.Player.Attack.performed += Attack;
             weaponCollider.enabled = false;
-            SetupPlayer();
+            await SetupPlayer();
         }
         else
         {
@@ -75,15 +75,22 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    public void SetupPlayer()
-    {
+    public async Task SetupPlayer()
+    {        
         Debug.Log("SetupPlayer foi chamado");
         playerCamera = GameObject.Find("PlayerCamera").GetComponent<Camera>();
         playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + cameraYOffset, playerCamera.transform.position.z);
         playerCamera.transform.SetParent(transform);
-        transform.position = GameManager.Instance.playerSpawnPoint.position;
 
+        while (!GameManager.Instance.alliesNetworkObjectList.Contains(this.NetworkObject))
+        {
+            await Awaitable.WaitForSecondsAsync(0.1f);
+        }
 
+        var index = GameManager.Instance.alliesNetworkObjectList.IndexOf(this.NetworkObject);       
+        transform.position = GameManager.Instance.playerSpawnPoint[index].position;
+        modelObj.SetActive(true);
+        canvasObj.SetActive(true);
         FillAttackAnimationInfo();
     }
 
@@ -95,6 +102,7 @@ public class PlayerController : NetworkBehaviour
     {
         await Awaitable.WaitForSecondsAsync(0.5f);
         GameManager.Instance.AddPlayerToList(this.NetworkObject);
+        Debug.Log("Id Adicionado do player: " + this.NetworkObject);
     }
     private void Update()
     {
@@ -181,11 +189,11 @@ public class PlayerController : NetworkBehaviour
             model.transform.forward = direction;*/
 
 
-            Vector3 targetDirection = position - model.transform.position;
+            Vector3 targetDirection = position - modelObj.transform.position;
             targetDirection.y = 0;
             float singleStep = rotationSpeed * Time.deltaTime;
-            Vector3 newDirection = Vector3.RotateTowards(model.transform.forward, targetDirection, singleStep, 0.0f);
-            model.transform.rotation = Quaternion.LookRotation(newDirection);
+            Vector3 newDirection = Vector3.RotateTowards(modelObj.transform.forward, targetDirection, singleStep, 0.0f);
+            modelObj.transform.rotation = Quaternion.LookRotation(newDirection);
         }
     }
 

@@ -13,10 +13,9 @@ public class GameManager : NetworkBehaviour
     [SerializeField] public Camera mainPlayerCamera;
 
     [SerializeField] public Transform[] spawnPoint;
-    [SerializeField] public Transform playerSpawnPoint;
+    [SerializeField] public Transform[] playerSpawnPoint;
     [SerializeField] public Transform baseTransform;
-    [SerializeField] public GameObject enemyPrefab;
-
+    [SerializeField] public GameObject enemyPrefab;    
 
     [SerializeField] public List<Transform> enemiesTransformList = new List<Transform>();
 
@@ -68,7 +67,5 @@ public class GameManager : NetworkBehaviour
         }
       
 
-    }
-
-
+    }    
 }

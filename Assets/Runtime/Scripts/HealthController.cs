@@ -32,6 +32,8 @@ public class HealthController : NetworkBehaviour
         }
     }
 
+
+
     public override void OnStartClient()
     {
         base.OnStartClient();

@@ -279,7 +279,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7281666368565201469
 Transform:
   m_ObjectHideFlags: 0
@@ -1176,7 +1176,8 @@ MonoBehaviour:
   rb: {fileID: -5759660471522862659}
   movementSpeed: 300
   rotationSpeed: 20
-  model: {fileID: 1541610030938574282}
+  modelObj: {fileID: 1541610030938574282}
+  canvasObj: {fileID: 6920561828076516056}
   usernameText: {fileID: 8246334067060073583}
   attackCooldown: 0.5
   attackSpeedMultiplier: 1.5
@@ -1524,7 +1525,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3517022950281270770
 RectTransform:
   m_ObjectHideFlags: 0
