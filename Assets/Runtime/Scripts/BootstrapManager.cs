@@ -2,12 +2,15 @@ using FishNet.Managing;
 using Steamworks;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class BootstrapManager : MonoBehaviour
 {
     public static BootstrapManager Instance;
+
+    public static Action OnHostDisconnected;
 
     [SerializeField] private string menuSceneName = "MainMenuScene";
     [SerializeField] private NetworkManager networkManager;
@@ -22,6 +25,7 @@ public class BootstrapManager : MonoBehaviour
     protected Callback<AvatarImageLoaded_t> AvatarImageLoaded;
 
     public static ulong CurrentLobbyID;
+    private CSteamID originalHostId;
 
     private void Awake()
     {
@@ -82,7 +86,7 @@ public class BootstrapManager : MonoBehaviour
                     allReady = false;
                     break;
                 }
-                
+
             }
         }
         return allReady;
@@ -105,7 +109,7 @@ public class BootstrapManager : MonoBehaviour
     public void SetReadyStatus(bool isReady, CSteamID id)
     {
         if (SteamUser.GetSteamID() != id) return;
-        string steamId = SteamUser.GetSteamID().ToString();        
+        string steamId = SteamUser.GetSteamID().ToString();
         SteamMatchmaking.SetLobbyMemberData(new CSteamID(CurrentLobbyID), steamId + "_isReady", isReady.ToString());
     }
 
@@ -123,6 +127,7 @@ public class BootstrapManager : MonoBehaviour
         fishySteamworks.SetClientAddress(SteamUser.GetSteamID().ToString());
         fishySteamworks.StartConnection(true);
         Debug.Log("Lobby creation was successful");
+
 
 
 
@@ -205,6 +210,11 @@ public class BootstrapManager : MonoBehaviour
 
                 case (uint)EChatMemberStateChange.k_EChatMemberStateChangeLeft:
                     Debug.Log("Player left the lobby: " + SteamFriends.GetFriendPersonaName(playerId));
+                    if (playerId == originalHostId)
+                    {
+                        Debug.Log("Host has left the lobby... Closing match ");
+                        OnHostDisconnected?.Invoke();
+                    }
                     break;
 
                 case (uint)EChatMemberStateChange.k_EChatMemberStateChangeDisconnected:
@@ -218,9 +228,13 @@ public class BootstrapManager : MonoBehaviour
                 case (uint)EChatMemberStateChange.k_EChatMemberStateChangeBanned:
                     Debug.Log("Player was banned from the lobby: " + SteamFriends.GetFriendPersonaName(playerId));
                     break;
+
             }
         }
     }
+
+
+
     private void NotifyPlayerJoined(CSteamID newPlayerId)
     {
         string newPlayerName = SteamFriends.GetFriendPersonaName(newPlayerId);
@@ -242,17 +256,25 @@ public class BootstrapManager : MonoBehaviour
             Debug.Log("Received lobby chat message: " + message);
         }
     }
-    public static void JoinByID(CSteamID steamID)
+    public async static void JoinByID(CSteamID steamID)
     {
         Debug.Log("Attempting to join lobby with ID: " + steamID.m_SteamID);
         if (SteamMatchmaking.RequestLobbyData(steamID))
         {
+            await Instance.SetOriginalHostID(steamID);
             SteamMatchmaking.JoinLobby(steamID);
         }
         else
         {
             Debug.Log("Failed to join lobby with ID: " + steamID.m_SteamID);
         }
+    }
+
+    private async Task SetOriginalHostID(CSteamID steamID)
+    {
+        await Awaitable.WaitForSecondsAsync(0.1f);
+        Instance.originalHostId =  SteamMatchmaking.GetLobbyOwner(steamID);
+        await Awaitable.WaitForSecondsAsync(0.1f);
     }
     public static void LeaveLobby()
     {
@@ -264,5 +286,7 @@ public class BootstrapManager : MonoBehaviour
         {
             Instance.fishySteamworks.StopConnection(true);
         }
+
+
     }
 }

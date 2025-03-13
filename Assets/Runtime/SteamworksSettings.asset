@@ -17,7 +17,7 @@ MonoBehaviour:
   callbackTick_Milliseconds: 15
   isDebugging: 0
   server:
-    autoInitialize: 0
+    autoInitialize: 1
     autoLogon: 0
     ip: 0
     queryPort: 27016

@@ -1,14 +1,14 @@
 using FishNet;
 using FishNet.CodeGenerating;
-using FishNet.Component.Spawning;
 using FishNet.Connection;
-using FishNet.Managing;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using Steamworks;
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
-using static UnityEngine.Rendering.GPUSort;
+using UnityEngine.SceneManagement;
+
 
 public class PlayerClientManager : NetworkBehaviour
 {
@@ -22,8 +22,15 @@ public class PlayerClientManager : NetworkBehaviour
     {
 
         UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneManager_sceneLoaded;
+        BootstrapManager.OnHostDisconnected += BootstrapManager_OnHostDisconnected;
 
     }
+
+    private async void BootstrapManager_OnHostDisconnected()
+    {
+       await LeaveMatch();
+    }
+
     //only works when called directly on the scene
     public override void OnStartClient()
     {
@@ -46,9 +53,12 @@ public class PlayerClientManager : NetworkBehaviour
         {
             if (scene.name == "GameScene")
             {
-                //InstanceFinder.SceneManager.AddConnectionToScene(LocalConnection, arg0);                
+                            
                 SetUsername(SteamFriends.GetPersonaName().ToString());
                 SpawnPlayer(LocalConnection, this);
+
+
+
             }
         }
 
@@ -65,11 +75,29 @@ public class PlayerClientManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void SpawnPlayer(NetworkConnection conn, PlayerClientManager clientScript)
     {
-        GameObject obj = Instantiate(playerPrefab, transform.position, Quaternion.identity);
-        Spawn(obj, conn);
-        SetSpawnedPlayer(obj, clientScript);
+        GameObject playerObj = Instantiate(playerPrefab, transform.position, Quaternion.identity);
+        GameObject modelObj = playerObj.transform.GetChild(0).gameObject;
+        GameObject worldCanvasObj = playerObj.transform.GetChild(1).gameObject;
+        GameObject mainCanvasObj = playerObj.transform.GetChild(2).gameObject;
+
+        
+
+        modelObj.SetActive(false);
+        worldCanvasObj.SetActive(false);        
+        mainCanvasObj.SetActive(false);
+
+        Spawn(playerObj, conn);
+        SetSpawnedPlayer(playerObj, clientScript);
         SetUsernameOnPlayer(this, username.Value);
+        SetClientRefOnPlayer(this);
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void DespawnPlayer()
+    {
+        Despawn(playerSpawnedRef);
+    }
+
     [ObserversRpc]
     public void SetSpawnedPlayer(GameObject playerObj, PlayerClientManager clientScript)
     {
@@ -80,4 +108,21 @@ public class PlayerClientManager : NetworkBehaviour
     {
         script.playerSpawnedRef.GetComponent<PlayerController>().SetUsername(username);
     }
+    [ObserversRpc]
+    public void SetClientRefOnPlayer(PlayerClientManager script)
+    {
+        script.playerSpawnedRef.GetComponent<PlayerController>().playerClientManagerRef = script;
+    }
+
+    public async Task LeaveMatch()
+    {
+        if (!IsOwner) { return; };
+        DespawnPlayer();
+        await Awaitable.WaitForSecondsAsync(0.1f);       
+        BootstrapManager.LeaveLobby();
+        await Awaitable.WaitForSecondsAsync(0.2f);
+        await UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("MainMenuScene", LoadSceneMode.Additive);       
+
+    }
+
 }

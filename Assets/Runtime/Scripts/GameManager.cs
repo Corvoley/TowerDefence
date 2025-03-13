@@ -5,6 +5,7 @@ using FishNet.Object.Synchronizing;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : NetworkBehaviour
 {
@@ -15,7 +16,8 @@ public class GameManager : NetworkBehaviour
     [SerializeField] public Transform[] spawnPoint;
     [SerializeField] public Transform[] playerSpawnPoint;
     [SerializeField] public Transform baseTransform;
-    [SerializeField] public GameObject enemyPrefab;    
+    [SerializeField] public GameObject enemyPrefab;
+    [SerializeField] public Button exitButton;
 
     [SerializeField] public List<Transform> enemiesTransformList = new List<Transform>();
 
@@ -38,6 +40,7 @@ public class GameManager : NetworkBehaviour
         {
             SpawnEnemy();
         }
+      
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -56,7 +59,7 @@ public class GameManager : NetworkBehaviour
         Despawn(obj);
     }
 
-    public void AddPlayerToList(NetworkObject player)
+    public void AddPlayerToAlliesList(NetworkObject player)
     {
 
         if (!base.IsServerInitialized) return;
@@ -64,8 +67,18 @@ public class GameManager : NetworkBehaviour
         {
             alliesNetworkObjectList.Add(player);
             Debug.Log($"Player {player.Owner.ClientId} added. Total Players: {alliesNetworkObjectList.Count}");
-        }
-      
+        }     
 
-    }    
+    }
+    public void RemovePlayerFromAlliesList(NetworkObject player)
+    {
+
+        if (!base.IsServerInitialized) return;
+        if (alliesNetworkObjectList.Contains(player))
+        {
+            alliesNetworkObjectList.Remove(player);
+            Debug.Log($"Player {player.Owner.ClientId} was removed. Total Players: {alliesNetworkObjectList.Count}");
+        }
+
+    }
 }

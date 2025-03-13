@@ -1,19 +1,13 @@
-using FishNet.CodeGenerating;
 using FishNet.Component.Animating;
-using FishNet.Example.ColliderRollbacks;
 using FishNet.Object;
-using FishNet.Object.Synchronizing;
-using Steamworks;
 using System;
-using System.Collections;
 using System.Threading.Tasks;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
-using static UnityEngine.GraphicsBuffer;
-using static UnityEngine.ParticleSystem;
+using UnityEngine.UI;
+
+
 
 public class PlayerController : NetworkBehaviour
 {
@@ -30,8 +24,9 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float rotationSpeed;
 
     [SerializeField] private GameObject modelObj;
-    [SerializeField] private GameObject canvasObj;
-
+    [SerializeField] private GameObject worldCanvasObj;
+    [SerializeField] private GameObject mainCanvasObj;
+    [SerializeField] public PlayerClientManager playerClientManagerRef;
 
     [SerializeField] private TextMeshProUGUI usernameText;
 
@@ -44,7 +39,7 @@ public class PlayerController : NetworkBehaviour
     private float attackTimer;
     private float attackClipDuration;
 
-    
+
     private Vector2 inputVector;
     private bool canRotate = true;
     private PlayerInputActions playerInputActions;
@@ -74,9 +69,19 @@ public class PlayerController : NetworkBehaviour
             this.enabled = false;
         }
     }
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+        GameManager.Instance.RemovePlayerFromAlliesList(this.NetworkObject);
+        if (base.IsOwner)
+        {
+            playerInputActions.Player.Disable();
+            playerInputActions.Player.Attack.performed -= Attack;          
+        }
+    }
 
     public async Task SetupPlayer()
-    {        
+    {
         Debug.Log("SetupPlayer foi chamado");
         playerCamera = GameObject.Find("PlayerCamera").GetComponent<Camera>();
         playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + cameraYOffset, playerCamera.transform.position.z);
@@ -87,11 +92,28 @@ public class PlayerController : NetworkBehaviour
             await Awaitable.WaitForSecondsAsync(0.1f);
         }
 
-        var index = GameManager.Instance.alliesNetworkObjectList.IndexOf(this.NetworkObject);       
+        var index = GameManager.Instance.alliesNetworkObjectList.IndexOf(this.NetworkObject);
         transform.position = GameManager.Instance.playerSpawnPoint[index].position;
-        modelObj.SetActive(true);
-        canvasObj.SetActive(true);
+        await Awaitable.WaitForSecondsAsync(0.1f);
+        ActivatePlayerChilds();
+
+
+        mainCanvasObj.SetActive(true);
+        var button = mainCanvasObj.transform.Find("exitButton").GetComponent<Button>();
+        button.onClick.AddListener(async () => { await playerClientManagerRef.LeaveMatch(); });
+
         FillAttackAnimationInfo();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ActivatePlayerChilds()
+    {
+        NetworkObject modelObjNetworkObject = transform.GetChild(0).GetComponent<NetworkObject>();
+        Spawn(modelObjNetworkObject.gameObject, Owner);
+
+        
+        NetworkObject canvasObjNetworkObject = transform.GetChild(1).GetComponent<NetworkObject>();
+        Spawn(canvasObjNetworkObject.gameObject);
     }
 
     public void SetUsername(string username)
@@ -101,7 +123,7 @@ public class PlayerController : NetworkBehaviour
     private async Task AddPlayerToList()
     {
         await Awaitable.WaitForSecondsAsync(0.5f);
-        GameManager.Instance.AddPlayerToList(this.NetworkObject);
+        GameManager.Instance.AddPlayerToAlliesList(this.NetworkObject);
         Debug.Log("Id Adicionado do player: " + this.NetworkObject);
     }
     private void Update()
@@ -140,22 +162,23 @@ public class PlayerController : NetworkBehaviour
 
         if (Time.time >= attackTimer)
         {
-            Debug.Log("Attack!!!!");
             attackTimer = Time.time + attackCooldown + (attackClipDuration / attackSpeedMultiplier);
             await AttackTask(attackStartPercent * (attackClipDuration / attackSpeedMultiplier), attackDurationPercent * (attackClipDuration / attackSpeedMultiplier), weaponCollider);
+            
         }
     }
     private async Task AttackTask(float start, float duration, Collider weaponCollider)
     {
+
         canRotate = false;
         networkAnimator.SetTrigger("Attack");
         animator.SetFloat("AttackSpeedMultiplier", attackSpeedMultiplier);
         await Awaitable.WaitForSecondsAsync(start);
-        particle.Play();
-        weaponCollider.enabled = true;
+        if (particle != null) particle.Play();
+        if (weaponCollider != null) weaponCollider.enabled = true;
         await Awaitable.WaitForSecondsAsync(duration);
-        particle.Stop();
-        weaponCollider.enabled = false;
+        if (particle != null) particle.Stop();
+        if (weaponCollider != null) weaponCollider.enabled = false;
         var end = (attackClipDuration / attackSpeedMultiplier) - (start + duration);
         await Awaitable.WaitForSecondsAsync(end);
         canRotate = true;
@@ -177,17 +200,6 @@ public class PlayerController : NetworkBehaviour
         var (success, position) = GetMousePosition();
         if (success)
         {
-            /*
-            // Calculate the direction
-            var direction = position - model.transform.position;
-
-            // You might want to delete this line.
-            // Ignore the height difference.
-            direction.y = 0;
-
-            // Make the transform look in the direction.
-            model.transform.forward = direction;*/
-
 
             Vector3 targetDirection = position - modelObj.transform.position;
             targetDirection.y = 0;
@@ -214,7 +226,4 @@ public class PlayerController : NetworkBehaviour
             return (success: false, position: Vector3.zero);
         }
     }
-
-
-
 }
