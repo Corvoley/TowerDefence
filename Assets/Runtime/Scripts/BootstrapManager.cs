@@ -1,4 +1,6 @@
+using FishNet;
 using FishNet.Managing;
+using FishNet.Object;
 using Steamworks;
 using System;
 using System.Collections.Generic;
@@ -15,6 +17,7 @@ public class BootstrapManager : MonoBehaviour
     [SerializeField] private string menuSceneName = "MainMenuScene";
     [SerializeField] private NetworkManager networkManager;
     [SerializeField] private FishySteamworks.FishySteamworks fishySteamworks;
+
 
     protected Callback<LobbyCreated_t> LobbyCreated;
     protected Callback<GameLobbyJoinRequested_t> JoinRequest;
@@ -40,6 +43,7 @@ public class BootstrapManager : MonoBehaviour
         LobbyDataUpdate = Callback<LobbyDataUpdate_t>.Create(OnLobbyDataUpdate);
 
         AvatarImageLoaded = Callback<AvatarImageLoaded_t>.Create(OnAvatarImageLoaded);
+        
 
     }
 
@@ -145,10 +149,11 @@ public class BootstrapManager : MonoBehaviour
 
 
         fishySteamworks.SetClientAddress(SteamMatchmaking.GetLobbyData(new CSteamID(CurrentLobbyID), "HostAddress"));
-        fishySteamworks.StartConnection(false);
+        fishySteamworks.StartConnection(false);     
 
         UpdatePlayerList();
     }
+
 
     private void UpdatePlayerList()
     {
@@ -273,7 +278,7 @@ public class BootstrapManager : MonoBehaviour
     private async Task SetOriginalHostID(CSteamID steamID)
     {
         await Awaitable.WaitForSecondsAsync(0.1f);
-        Instance.originalHostId =  SteamMatchmaking.GetLobbyOwner(steamID);
+        Instance.originalHostId = SteamMatchmaking.GetLobbyOwner(steamID);
         await Awaitable.WaitForSecondsAsync(0.1f);
     }
     public static void LeaveLobby()
@@ -286,7 +291,8 @@ public class BootstrapManager : MonoBehaviour
         {
             Instance.fishySteamworks.StopConnection(true);
         }
-
+     
+        
 
     }
 }

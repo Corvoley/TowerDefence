@@ -9,7 +9,13 @@ public class BootstrapNetworkManager : NetworkBehaviour
     private static BootstrapNetworkManager instance;
     private void Awake()
     {
-        instance = this;        
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject); // Ensure only one instance exists
+            return;
+        }
+
+        instance = this;
     }
     public static void ChangeNetworkScene(string sceneName, string[] scenesToClose)
     {
