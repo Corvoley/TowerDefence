@@ -17,8 +17,6 @@ public class PlayerClientManager : NetworkBehaviour
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject playerSpawnedRef;
 
-    [SerializeField] private GameObject bootstrapNetworkPrefab;
-    [SerializeField] private GameObject bootstrapNetworkPrefabRef;
 
     [AllowMutableSyncType]
     [SerializeField]
@@ -41,8 +39,7 @@ public class PlayerClientManager : NetworkBehaviour
     {
         base.OnStartClient();
         if (IsOwner)
-        {
-            SpawnBootstrapNetwork();
+        {         
 
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameScene")
             {
@@ -76,13 +73,6 @@ public class PlayerClientManager : NetworkBehaviour
         //usernameText.text = username;
         Debug.Log("Nome de usuario setado: " + username.Value);
 
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void SpawnBootstrapNetwork()
-    {
-        bootstrapNetworkPrefabRef = Instantiate(bootstrapNetworkPrefab);
-        Spawn(bootstrapNetworkPrefabRef, LocalConnection);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -134,12 +124,6 @@ public class PlayerClientManager : NetworkBehaviour
         await Awaitable.WaitForSecondsAsync(0.1f);       
         BootstrapManager.LeaveLobby();
         await Awaitable.WaitForSecondsAsync(0.2f);
-      
-        if (InstanceFinder.NetworkManager != null)
-        {
-            InstanceFinder.NetworkManager.ServerManager.StopConnection(true);
-            InstanceFinder.NetworkManager.ClientManager.StopConnection();   
-        }
         await UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("MainMenuScene", LoadSceneMode.Additive);       
 
     }
