@@ -27,6 +27,7 @@ public class BootstrapManager : MonoBehaviour
 
     protected Callback<AvatarImageLoaded_t> AvatarImageLoaded;
 
+   
     public static ulong CurrentLobbyID;
     private CSteamID originalHostId;
 
@@ -291,8 +292,8 @@ public class BootstrapManager : MonoBehaviour
         {
             Instance.fishySteamworks.StopConnection(true);
         }
-     
-        
+
+    
 
     }
 }

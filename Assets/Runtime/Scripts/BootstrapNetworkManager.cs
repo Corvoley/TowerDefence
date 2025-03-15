@@ -8,14 +8,14 @@ public class BootstrapNetworkManager : NetworkBehaviour
 {
     private static BootstrapNetworkManager instance;
     private void Awake()
-    {
-        if (instance != null && instance != this)
-        {
-            Destroy(gameObject); // Ensure only one instance exists
-            return;
-        }
-
+    {    
         instance = this;
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        Debug.Log(this.Owner);
     }
     public static void ChangeNetworkScene(string sceneName, string[] scenesToClose)
     {

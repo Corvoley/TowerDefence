@@ -16,6 +16,9 @@ public class PlayerClientManager : NetworkBehaviour
     //[SerializeField] private PlayerSpawner playerSpawner;
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject playerSpawnedRef;
+    [SerializeField] private GameObject bootstrapNetworkPrefab;
+    [SerializeField] private GameObject bootstrapNetworkRef;
+
 
 
     [AllowMutableSyncType]
@@ -31,15 +34,21 @@ public class PlayerClientManager : NetworkBehaviour
 
     private async void BootstrapManager_OnHostDisconnected()
     {
-       await LeaveMatch();
+        await LeaveMatch();
     }
 
     //only works when called directly on the scene
     public override void OnStartClient()
     {
         base.OnStartClient();
+
+
         if (IsOwner)
-        {         
+        {
+            if (IsServerInitialized)
+            {
+                SpawnBootstrapNetwork();
+            }
 
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameScene")
             {
@@ -56,7 +65,7 @@ public class PlayerClientManager : NetworkBehaviour
         {
             if (scene.name == "GameScene")
             {
-                            
+
                 SetUsername(SteamFriends.GetPersonaName().ToString());
                 SpawnPlayer(LocalConnection, this);
 
@@ -83,16 +92,17 @@ public class PlayerClientManager : NetworkBehaviour
         GameObject worldCanvasObj = playerObj.transform.GetChild(1).gameObject;
         GameObject mainCanvasObj = playerObj.transform.GetChild(2).gameObject;
 
-        
+
 
         modelObj.SetActive(false);
-        worldCanvasObj.SetActive(false);        
+        worldCanvasObj.SetActive(false);
         mainCanvasObj.SetActive(false);
 
         Spawn(playerObj, conn);
         SetSpawnedPlayer(playerObj, clientScript);
         SetUsernameOnPlayer(this, username.Value);
         SetClientRefOnPlayer(this);
+
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -106,6 +116,25 @@ public class PlayerClientManager : NetworkBehaviour
     {
         clientScript.playerSpawnedRef = playerObj;
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnBootstrapNetwork()
+    {
+        var bootstrap = Instantiate(bootstrapNetworkPrefab);
+        Spawn(bootstrap);
+        SetBootstrapNetworkRefForPlayers(bootstrap);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public void DespawnBootstrapNetwork()
+    {
+        Despawn(bootstrapNetworkRef);
+    }
+    [ObserversRpc(BufferLast = true)]
+    public void SetBootstrapNetworkRefForPlayers(GameObject boostrapRef)
+    {
+        bootstrapNetworkRef = boostrapRef;
+    }
+
     [ObserversRpc]
     public void SetUsernameOnPlayer(PlayerClientManager script, string username)
     {
@@ -121,11 +150,23 @@ public class PlayerClientManager : NetworkBehaviour
     {
         if (!IsOwner) { return; };
         DespawnPlayer();
-        await Awaitable.WaitForSecondsAsync(0.1f);       
+        await Awaitable.WaitForSecondsAsync(0.5f);
         BootstrapManager.LeaveLobby();
-        await Awaitable.WaitForSecondsAsync(0.2f);
-        await UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("MainMenuScene", LoadSceneMode.Additive);       
+        await UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("MainMenuScene", LoadSceneMode.Additive);
+        await Awaitable.WaitForSecondsAsync(0.5f);
+        if (UnityEngine.SceneManagement.SceneManager.GetSceneByName("GameScene").IsValid())
+        {
+            await UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync("GameScene");
+        }
 
     }
+    public override void OnStopServer()
+    {
+        base.OnStopServer();
+        if (IsServerInitialized)
+        {
+            DespawnBootstrapNetwork();
+        }
 
+    }
 }
