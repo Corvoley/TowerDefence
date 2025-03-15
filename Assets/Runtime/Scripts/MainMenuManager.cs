@@ -11,6 +11,7 @@ public class MainMenuManager : MonoBehaviour
     public static MainMenuManager Instance;
 
 
+
     [SerializeField] private GameObject menuScreen;
     [SerializeField] private GameObject lobbyScreen;
 
@@ -29,7 +30,14 @@ public class MainMenuManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        BootstrapManager.OnHostDisconnected += BootstrapManager_OnHostDisconnected;
     }
+
+    private void BootstrapManager_OnHostDisconnected()
+    {        
+        LeaveLobby();
+    }
+
     private void Start()
     {
         playerInfoTemplate.SetActive(false);
@@ -58,6 +66,7 @@ public class MainMenuManager : MonoBehaviour
     }
     public void LeaveLobby()
     {
+        CleanPlayerInfoDictionary();
         BootstrapManager.LeaveLobby();
         OpenMainScreen();
     }
@@ -90,7 +99,7 @@ public class MainMenuManager : MonoBehaviour
         {
             Debug.Log("Not all players are ready!!!");
         }
-        
+
     }
 
 
@@ -114,6 +123,25 @@ public class MainMenuManager : MonoBehaviour
             playersOnLobbyInfoDictionary.Add(steamId, template);
         }
 
+    }
+
+    public void RemovePlayerInfo(CSteamID steamId)
+    {
+        if (playersOnLobbyInfoDictionary.ContainsKey(steamId))
+        {
+            Destroy(playersOnLobbyInfoDictionary[steamId].gameObject);
+            playersOnLobbyInfoDictionary.Remove(steamId);
+        }
+    }
+
+    private void CleanPlayerInfoDictionary()
+    {
+        foreach (CSteamID playerInfo in playersOnLobbyInfoDictionary.Keys)
+        {
+
+            Destroy(playersOnLobbyInfoDictionary[playerInfo].gameObject);
+        }
+        playersOnLobbyInfoDictionary.Clear();
     }
 
     public void SetPlayerReadyToogle(Toggle toggle)

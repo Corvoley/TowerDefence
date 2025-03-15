@@ -28,14 +28,9 @@ public class PlayerClientManager : NetworkBehaviour
     {
 
         UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneManager_sceneLoaded;
-        BootstrapManager.OnHostDisconnected += BootstrapManager_OnHostDisconnected;
 
     }
 
-    private async void BootstrapManager_OnHostDisconnected()
-    {
-        await LeaveMatch();
-    }
 
     //only works when called directly on the scene
     public override void OnStartClient()
@@ -151,13 +146,16 @@ public class PlayerClientManager : NetworkBehaviour
         if (!IsOwner) { return; };
         DespawnPlayer();
         await Awaitable.WaitForSecondsAsync(0.5f);
-        BootstrapManager.LeaveLobby();       
+        BootstrapManager.LeaveLobby();
 
     }
     private async Task ChangeToMainMenuScene()
     {
         await Awaitable.WaitForSecondsAsync(0.5f);
-        await UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("MainMenuScene", LoadSceneMode.Additive);
+        if (!UnityEngine.SceneManagement.SceneManager.GetSceneByName("MainMenuScene").IsValid())
+        {
+            await UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("MainMenuScene", LoadSceneMode.Additive);
+        }
         await Awaitable.WaitForSecondsAsync(0.5f);
         if (UnityEngine.SceneManagement.SceneManager.GetSceneByName("GameScene").IsValid())
         {
@@ -180,7 +178,7 @@ public class PlayerClientManager : NetworkBehaviour
         if (IsServerInitialized)
         {
             DespawnBootstrapNetwork();
-        }        
+        }
 
     }
 }

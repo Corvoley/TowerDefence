@@ -133,10 +133,6 @@ public class BootstrapManager : MonoBehaviour
         fishySteamworks.StartConnection(true);
         Debug.Log("Lobby creation was successful");
 
-
-
-
-
     }
     private void OnJoinRequest(GameLobbyJoinRequested_t callback)
     {
@@ -216,9 +212,14 @@ public class BootstrapManager : MonoBehaviour
 
                 case (uint)EChatMemberStateChange.k_EChatMemberStateChangeLeft:
                     Debug.Log("Player left the lobby: " + SteamFriends.GetFriendPersonaName(playerId));
-                    if (playerId == originalHostId)
+                    if (MainMenuManager.Instance != null)
                     {
-                        Debug.Log("Host has left the lobby... Closing match ");
+                        MainMenuManager.Instance.RemovePlayerInfo(playerId);
+                    }
+                     
+                    if(playerId == originalHostId)
+                    {
+                        Debug.Log($"Host {SteamFriends.GetFriendPersonaName(playerId)} left the lobby ");
                         OnHostDisconnected?.Invoke();
                     }
                     break;
@@ -273,14 +274,17 @@ public class BootstrapManager : MonoBehaviour
         else
         {
             Debug.Log("Failed to join lobby with ID: " + steamID.m_SteamID);
+                
         }
     }
 
     private async Task SetOriginalHostID(CSteamID steamID)
     {
-        await Awaitable.WaitForSecondsAsync(0.1f);
+        await Awaitable.WaitForSecondsAsync(0.5f);
+        Debug.Log("Setting originalHostID");
         Instance.originalHostId = SteamMatchmaking.GetLobbyOwner(steamID);
-        await Awaitable.WaitForSecondsAsync(0.1f);
+        Debug.Log($"originalHostID is now {Instance.originalHostId}");     
+
     }
     public static void LeaveLobby()
     {
