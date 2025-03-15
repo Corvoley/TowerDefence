@@ -49,8 +49,7 @@ public class PlayerController : NetworkBehaviour
     private Camera playerCamera;
 
     public override async void OnStartClient()
-    {
-        Debug.Log("OnStartClient Foi Chamado");
+    {        
         base.OnStartClient();
         if (base.IsServerInitialized)
         {
@@ -81,8 +80,7 @@ public class PlayerController : NetworkBehaviour
     }
 
     public async Task SetupPlayer()
-    {
-        Debug.Log("SetupPlayer foi chamado");
+    {     
         playerCamera = GameObject.Find("PlayerCamera").GetComponent<Camera>();
         playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + cameraYOffset, playerCamera.transform.position.z);
         playerCamera.transform.SetParent(transform);

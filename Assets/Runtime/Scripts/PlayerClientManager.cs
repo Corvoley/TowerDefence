@@ -151,14 +151,28 @@ public class PlayerClientManager : NetworkBehaviour
         if (!IsOwner) { return; };
         DespawnPlayer();
         await Awaitable.WaitForSecondsAsync(0.5f);
-        BootstrapManager.LeaveLobby();
+        BootstrapManager.LeaveLobby();       
+
+    }
+    private async Task ChangeToMainMenuScene()
+    {
+        await Awaitable.WaitForSecondsAsync(0.5f);
         await UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("MainMenuScene", LoadSceneMode.Additive);
         await Awaitable.WaitForSecondsAsync(0.5f);
         if (UnityEngine.SceneManagement.SceneManager.GetSceneByName("GameScene").IsValid())
         {
             await UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync("GameScene");
         }
+    }
+    public override async void OnStopClient()
+    {
+        base.OnStopClient();
+        if (IsClientInitialized && IsOwner)
+        {
+            Debug.Log("Calling scene Changes on OnStopServer as client");
+            await ChangeToMainMenuScene();
 
+        }
     }
     public override void OnStopServer()
     {
@@ -166,7 +180,7 @@ public class PlayerClientManager : NetworkBehaviour
         if (IsServerInitialized)
         {
             DespawnBootstrapNetwork();
-        }
+        }        
 
     }
 }
