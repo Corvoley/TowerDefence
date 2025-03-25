@@ -17,13 +17,59 @@ public static class UtilsClass
         return mouseWorldPosition;
     }
 
-    public static void RotateToTarget(Transform transformToRotate, Transform target, float rotateSpeed = 0, float rotationAngleOffset = 0, bool forward = false)
-    {
-        Vector2 dirVector = (Vector2)target.position - (Vector2)transformToRotate.position;
+    /* public static void RotateToTarget(Transform transformToRotate, Transform target, float rotateSpeed = 0, float rotationAngleOffset = 0, bool forward = false)
+     {
+         Vector3 dirVector = target.position - transformToRotate.position;
 
-        Quaternion targetRotation = Quaternion.LookRotation(transformToRotate.forward, forward? dirVector : -dirVector);
-        Quaternion rotation = Quaternion.RotateTowards(transformToRotate.rotation, targetRotation, rotateSpeed > 0 ? rotateSpeed * Time.deltaTime : 10000);
-        transformToRotate.SetPositionAndRotation(transformToRotate.position, rotation);
+         Quaternion targetRotation = Quaternion.LookRotation(forward? dirVector : -dirVector);
+         Quaternion rotation = Quaternion.RotateTowards(transformToRotate.rotation, targetRotation, rotateSpeed > 0 ? rotateSpeed * Time.deltaTime : 10000);
+         transformToRotate.SetPositionAndRotation(transformToRotate.position, rotation);
+     }*/
+
+    public static void RotateToTarget(Transform transformToRotate,
+    Transform target,
+    float rotateSpeed = 0,
+    float rotationAngleOffset = 0,
+    bool lookDirectlyAtTarget = true) // Renamed "forward" to clarify intent)
+    {
+        if (target == null) return;
+
+        Vector3 directionToTarget = target.position - transformToRotate.position;
+        if (directionToTarget.sqrMagnitude < 0.001f) return;
+
+        // Calculate the target rotation
+        Quaternion targetRotation;
+
+        if (lookDirectlyAtTarget)
+        {
+            // Standard LookAt (forward faces target)
+            targetRotation = Quaternion.LookRotation(directionToTarget);
+        }
+        else
+        {
+            // Rotate around target (Y-axis only, no Z-axis tilt)
+            directionToTarget.y = 0; // Flatten to XZ plane (optional, removes vertical influence)
+            targetRotation = Quaternion.LookRotation(directionToTarget);
+        }
+
+        // Apply angle offset (e.g., for facing slightly left/right of target)
+        if (rotationAngleOffset != 0)
+        {
+            targetRotation *= Quaternion.Euler(0, rotationAngleOffset, 0);
+        }
+
+        // Apply rotation
+        if (rotateSpeed > 0)
+        {
+            transformToRotate.rotation = Quaternion.RotateTowards(
+                transformToRotate.rotation,
+                targetRotation,
+                rotateSpeed * Time.deltaTime);
+        }
+        else
+        {
+            transformToRotate.rotation = targetRotation;
+        }
     }
     public static void RotateToTargetWithRigidbody(Rigidbody2D rigidbodyToRotate, Transform target, float rotateSpeed = 0, float rotationAngleOffset = 0, bool forward = false)
     {

@@ -455,6 +455,7 @@ Transform:
   - {fileID: 1155788989523099226}
   - {fileID: 8687568205492681055}
   - {fileID: 4623266782708872223}
+  - {fileID: 5611733504718024269}
   m_Father: {fileID: 6103732200358392906}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3559268059051186109
@@ -575,12 +576,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1993140028564706906}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.59, z: 3.57}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.0600002, z: 3.57}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6103732200358392906}
+  m_Father: {fileID: 7281666368565201469}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2047789129400518432
 GameObject:
@@ -722,7 +723,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 89cc97401eb588a408315f5fa0148929, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8046a37b860064dffbae3fe21a13f423, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1200,7 +1201,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2554636003802388130}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: PickupPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1766,7 +1767,6 @@ Transform:
   - {fileID: 3517022950281270770}
   - {fileID: 3361972263174543906}
   - {fileID: 2554636003802388130}
-  - {fileID: 5611733504718024269}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1991091016699932476
@@ -1822,7 +1822,7 @@ MonoBehaviour:
   health:
     NetworkManager: {fileID: 0}
     NetworkBehaviour: {fileID: 0}
-    _value: 100
+    _value: 0
   canBeDamaged:
     NetworkManager: {fileID: 0}
     NetworkBehaviour: {fileID: 0}

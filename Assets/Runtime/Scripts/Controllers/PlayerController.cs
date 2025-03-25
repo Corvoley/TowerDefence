@@ -84,7 +84,7 @@ public class PlayerController : NetworkBehaviour
     public async Task SetupPlayer()
     {     
         playerCamera = GameObject.Find("PlayerCamera").GetComponent<Camera>();
-        playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + cameraYOffset, playerCamera.transform.position.z);
+        //playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + cameraYOffset, playerCamera.transform.position.z);
         playerCamera.transform.SetParent(transform);
 
         while (!GameManager.Instance.alliesNetworkObjectList.Contains(this.NetworkObject))

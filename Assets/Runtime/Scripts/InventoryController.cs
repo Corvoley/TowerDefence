@@ -77,16 +77,18 @@ public class InventoryController : NetworkBehaviour
             {
                 invObj.amount--;
                 SpawnItemObjIntoWorld(invObj.itemSO.prefab);
+                UpdateInvUI();
                 return;
             }
-            if (invObj.amount < 1)
+            if (invObj.amount <= 1)
             {
                 inventory.inventoryObjects.Remove(invObj);
                 SpawnItemObjIntoWorld(invObj.itemSO.prefab);
+                UpdateInvUI();
                 return;
             }
         }
-        UpdateInvUI();
+        
     }
 
     [ServerRpc(RequireOwnership = false)]

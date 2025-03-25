@@ -61,7 +61,7 @@ public class EnemyController : NetworkBehaviour
 
     public override void OnStartClient()
     {
-        
+
         base.OnStartClient();
         SetupEnemy();
         FillAttackAnimationInfo();
@@ -73,7 +73,7 @@ public class EnemyController : NetworkBehaviour
     {
         currentTarget = defaultTarget;
         currentEnemyState = EnemyAIState.Walking;
-       
+
     }
 
     private void Update()
@@ -82,7 +82,7 @@ public class EnemyController : NetworkBehaviour
         ModelDirectionHandler();
         StateMachine();
     }
-    
+
     private void StateMachine()
     {
         if (Time.time >= timerAI)
@@ -105,8 +105,8 @@ public class EnemyController : NetworkBehaviour
             }
             timerAI = Time.time + refreshRateAI;
         }
-        
-        
+
+
     }
     private void FillAttackAnimationInfo()
     {
@@ -127,7 +127,7 @@ public class EnemyController : NetworkBehaviour
         if (Vector3.Distance(transform.position, currentTarget.position) > attackDistance)
         {
             currentEnemyState = EnemyAIState.Walking;
-        }        
+        }
         Attack();
     }
 
@@ -139,7 +139,7 @@ public class EnemyController : NetworkBehaviour
             currentTarget = closestTarget;
             currentEnemyState = EnemyAIState.Chasing;
         }
-       
+
         agent.SetDestination(currentTarget.position);
         if (Vector3.Distance(transform.position, currentTarget.position) <= attackDistance)
         {
@@ -148,13 +148,13 @@ public class EnemyController : NetworkBehaviour
     }
     private void ChasingStateHandler()
     {
-        
+
         if (currentTarget == null || Vector3.Distance(transform.position, currentTarget.position) > aggroDistance * 1.5f)
         {
             currentTarget = defaultTarget;
             currentEnemyState = EnemyAIState.Walking;
         }
-        
+
         agent.SetDestination(currentTarget.position);
         if (Vector3.Distance(transform.position, currentTarget.position) <= attackDistance)
         {
@@ -174,15 +174,15 @@ public class EnemyController : NetworkBehaviour
     }
     private async Task AttackTask(float start, float duration, Collider weaponCollider)
     {
-        
+
         networkAnimator.SetTrigger("Attack");
         animator.SetFloat("AttackSpeedMultiplier", attackSpeedMultiplier);
         await Awaitable.WaitForSecondsAsync(start);
 
-        weaponCollider.enabled = true;
+        if (weaponCollider != null) weaponCollider.enabled = true;
         await Awaitable.WaitForSecondsAsync(duration);
 
-        weaponCollider.enabled = false;
+        if (weaponCollider != null) weaponCollider.enabled = false;
         var end = (attackClipDuration / attackSpeedMultiplier) - (start + duration);
         await Awaitable.WaitForSecondsAsync(end);
 
@@ -218,7 +218,10 @@ public class EnemyController : NetworkBehaviour
         {
             return;
         }
-        model.transform.rotation = Quaternion.Slerp(model.transform.rotation, Quaternion.LookRotation(currentEnemyState != EnemyAIState.Attacking ? agent.velocity.normalized : currentTarget.position - transform.position), Time.deltaTime * rotationSpeed);
+        if (model.transform != null)
+        {
+            model.transform.rotation = Quaternion.Slerp(model.transform.rotation, Quaternion.LookRotation(currentEnemyState != EnemyAIState.Attacking ? agent.velocity.normalized : currentTarget.position - transform.position), Time.deltaTime * rotationSpeed);
+        }
     }
 
     private void OnDrawGizmosSelected()
@@ -230,6 +233,6 @@ public class EnemyController : NetworkBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, aggroDistance);
 
-    
+
     }
 }

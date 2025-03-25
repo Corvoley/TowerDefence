@@ -3,6 +3,7 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -79,5 +80,23 @@ public class GameManager : NetworkBehaviour
             Debug.Log($"Player {player.Owner.ClientId} was removed. Total Players: {alliesNetworkObjectList.Count}");
         }
 
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnResources(ResourceNodeOS resourceNodeOS, Vector3 spawnPos)
+    {
+        SpawnResourcesTask(resourceNodeOS, spawnPos);
+    }
+
+    private async void SpawnResourcesTask(ResourceNodeOS resourceNodeOS, Vector3 spawnPos)
+    {
+        int randomAmount = Random.Range(resourceNodeOS.minAmountToDrop, resourceNodeOS.maxAmountToDrop + 1);
+        await Awaitable.EndOfFrameAsync();
+        for (int i = 0; i < randomAmount; i++)
+        {
+            GameObject resource = Instantiate(resourceNodeOS.resourceToDrop.prefab, spawnPos, Quaternion.identity, null);
+            Spawn(resource);
+            
+        }
     }
 }

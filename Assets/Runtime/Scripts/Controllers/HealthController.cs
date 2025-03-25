@@ -27,7 +27,7 @@ public class HealthController : NetworkBehaviour
     {
         if (asServer || base.IsClientOnlyStarted)
         {
-            if (IsServerInitialized)
+            if (IsServerInitialized && healthSlider != null)
                 UpdateHealthBar(next);
         }
     }
@@ -39,6 +39,7 @@ public class HealthController : NetworkBehaviour
         base.OnStartClient();
         health.OnChange += Health_OnChange;
         SetCanBeDamaged(this, true);
+        UpdateHealth(this, maxHealth);
         if (!isPlayer) return;
         if (!base.IsOwner)
         {
@@ -49,7 +50,7 @@ public class HealthController : NetworkBehaviour
 
 
     public void DealDamage(float amount)
-    {        
+    {
         if (canBeDamaged.Value)
         {
             var health = this.health.Value;
@@ -62,24 +63,25 @@ public class HealthController : NetworkBehaviour
             else
             {
                 UpdateHealth(this, health);
+                Debug.Log("Damaged!!!!");
             }
-            Debug.Log("Damaged!!!!");
-            //OnHealthChanged?.Invoke();
+            // OnHealthChanged?.Invoke();
         }
     }
     [ObserversRpc]
     private void UpdateHealthBar(float amount)
     {
 
+        Debug.Log("updated health");
         healthSlider.fillAmount = amount / maxHealth;
     }
 
     public void HealDamage(float amount)
-    {       
+    {
         var health = this.health.Value;
         health += amount;
         health = Mathf.Clamp(health, 0, maxHealth);
-        UpdateHealth(this, health);
+        //UpdateHealth(this, health);
 
         //OnHealthChanged?.Invoke();
     }
