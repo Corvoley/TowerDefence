@@ -3,6 +3,7 @@ using FishNet.Object;
 using System;
 using System.Threading.Tasks;
 using TMPro;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -46,7 +47,8 @@ public class PlayerController : NetworkBehaviour
 
     [SerializeField] private float cameraYOffset;
 
-    private Camera playerCamera;
+    private Camera mainCamera;
+    private CinemachineCamera playerCamera;
 
     public override async void OnStartClient()
     {        
@@ -83,9 +85,13 @@ public class PlayerController : NetworkBehaviour
 
     public async Task SetupPlayer()
     {     
-        playerCamera = GameObject.Find("PlayerCamera").GetComponent<Camera>();
+        mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
+        playerCamera = GameObject.Find("PlayerCamera").GetComponent<CinemachineCamera>();
+
+        playerCamera.Follow = transform;
+        playerCamera.transform.position = Vector3.zero;
         //playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + cameraYOffset, playerCamera.transform.position.z);
-        playerCamera.transform.SetParent(transform);
+        //playerCamera.transform.SetParent(transform);
 
         while (!GameManager.Instance.alliesNetworkObjectList.Contains(this.NetworkObject))
         {
@@ -211,9 +217,9 @@ public class PlayerController : NetworkBehaviour
 
     private (bool success, Vector3 position) GetMousePosition()
     {
-        if (playerCamera == null) return (success: false, Vector3.zero);
+        if (mainCamera == null) return (success: false, Vector3.zero);
 
-        var ray = playerCamera.ScreenPointToRay(Input.mousePosition);
+        var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
         if (Physics.Raycast(ray, out var hitInfo, Mathf.Infinity, groundMask))
         {
