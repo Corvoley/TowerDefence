@@ -51,7 +51,7 @@ public class EnemyController : NetworkBehaviour
 
     public EnemyAIState currentEnemyState;
 
-    private int positionIndex = 0;
+   
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();

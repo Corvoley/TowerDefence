@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class GameManager : NetworkBehaviour
 {
     public static GameManager Instance;
@@ -87,6 +88,12 @@ public class GameManager : NetworkBehaviour
     {
         SpawnResourcesTask(resourceNodeOS, spawnPos);
     }
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnPlaceable(PlaceableSO placeable, Vector3 position)
+    {
+        var obj = Instantiate(placeable.objPrefab, position, Quaternion.identity, null);
+        Spawn(obj);
+    }
 
     private async void SpawnResourcesTask(ResourceNodeOS resourceNodeOS, Vector3 spawnPos)
     {
@@ -94,7 +101,8 @@ public class GameManager : NetworkBehaviour
         await Awaitable.EndOfFrameAsync();
         for (int i = 0; i < randomAmount; i++)
         {
-            GameObject resource = Instantiate(resourceNodeOS.resourceToDrop.prefab, spawnPos, Quaternion.identity, null);
+            var randomPosOffset = Random.insideUnitSphere;
+            GameObject resource = Instantiate(resourceNodeOS.resourceToDrop.prefab, spawnPos + randomPosOffset, Quaternion.identity, null);
             Spawn(resource);
             
         }

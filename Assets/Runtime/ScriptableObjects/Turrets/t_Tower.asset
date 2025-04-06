@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6080a256212ef0b49a05a14781ceaa32, type: 3}
+  m_Name: t_Tower
+  m_EditorClassIdentifier: 
+  objName: Tower
+  objPrefab: {fileID: 2413798206556020653, guid: f98d594aefabfee4d8379131d70f41a0, type: 3}
+  placementRadius: 10
+  projectilePrefab: {fileID: 7803696572511370594, guid: a8fd9e84d912f8e42a2c0baae1719ef7, type: 3}
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  attackRadius: 20
+  rotationSpeed: 100
+  shootDelay: 1
+  constructionResourceList:
+  - itemSO: {fileID: 11400000, guid: 579007f3655d3f74aa62cbd3d83e5cf6, type: 2}
+    amount: 10
+  - itemSO: {fileID: 11400000, guid: 09047367ba562124194b9f2c3b56133c, type: 2}
+    amount: 10

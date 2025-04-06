@@ -57,7 +57,7 @@ public class InventoryController : NetworkBehaviour
             {
                 if (itemCollider.TryGetComponent(out item))
                 {
-                    AddItemToInventory(item.itemSO);
+                   InventoryUtils.AddItemToInventory(inventory,item.itemSO);
                     DespawnItemObjFromWorld(item.gameObject);
                 }
             }
@@ -103,19 +103,7 @@ public class InventoryController : NetworkBehaviour
     {
         ServerManager.Despawn(objToDespawn, DespawnType.Destroy);
     }
-    private void AddItemToInventory(ItemSO newItemSO)
-    {
-        foreach (Inventory.InventoryObject invObj in inventory.inventoryObjects)
-        {
-            if (invObj.itemSO == newItemSO)
-            {
-                invObj.amount++;
-                return;
-            }
-        }
-        inventory.inventoryObjects.Add(new Inventory.InventoryObject() { itemSO = newItemSO, amount = 1 });
-
-    }
+ 
     private void ToggleInventory()
     {
         inventoryPanel.SetActive(!inventoryPanel.activeSelf);

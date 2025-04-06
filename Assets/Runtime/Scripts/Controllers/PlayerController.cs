@@ -97,7 +97,7 @@ public class PlayerController : NetworkBehaviour
         {
             await Awaitable.WaitForSecondsAsync(0.1f);
         }
-
+        await Awaitable.WaitForSecondsAsync(0.1f);
         var index = GameManager.Instance.alliesNetworkObjectList.IndexOf(this.NetworkObject);
         transform.position = GameManager.Instance.playerSpawnPoint[index].position;
         await Awaitable.WaitForSecondsAsync(0.1f);
@@ -146,7 +146,7 @@ public class PlayerController : NetworkBehaviour
     {
 
         Vector3 force = new Vector3(movementSpeed * inputVector.x, 0, movementSpeed * inputVector.y);
-        rb.AddForce(force);
+        rb.AddForce(force, ForceMode.Force);
 
     }
 
@@ -203,7 +203,7 @@ public class PlayerController : NetworkBehaviour
     private void RotateToMousePosition()
     {
         if (!canRotate) return;
-        var (success, position) = GetMousePosition();
+        (bool success, Vector3 position) = UtilsClass.GetMouseWorldPosition(groundMask);
         if (success)
         {
 
@@ -215,21 +215,5 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    private (bool success, Vector3 position) GetMousePosition()
-    {
-        if (mainCamera == null) return (success: false, Vector3.zero);
-
-        var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-
-        if (Physics.Raycast(ray, out var hitInfo, Mathf.Infinity, groundMask))
-        {
-            // The Raycast hit something, return with the position.
-            return (success: true, position: hitInfo.point);
-        }
-        else
-        {
-            // The Raycast did not hit anything.
-            return (success: false, position: Vector3.zero);
-        }
-    }
+    
 }

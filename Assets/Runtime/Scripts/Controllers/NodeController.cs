@@ -11,6 +11,7 @@ public class NodeController : NetworkBehaviour
     public override void OnStopClient()
     {
         base.OnStopClient();       
+
         gameManager.SpawnResources(resourceNodeOS, transform.position);
     }
 

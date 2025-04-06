@@ -5,16 +5,13 @@ using UnityEngine;
 
 public class TurretController : NetworkBehaviour
 {
-    [SerializeField] private GameObject projectilePrefab;
-
     [SerializeField] private Transform nearestTarget;
     [SerializeField] private Transform turretHead;
-    [SerializeField] private float range;
-    [SerializeField] private float rotationSpeed;
-    [SerializeField] private LayerMask targetMask;
+    [SerializeField] private Canvas placementCanvas;
+
+    [SerializeField] private TurretSO turretSO;
+       
     [SerializeField] private bool canShoot;
-    [SerializeField] private bool canRotate;
-    [SerializeField] private float shootDelay;
 
     private float shootTimer;
     private Vector3 nearestTargetPos;
@@ -34,6 +31,7 @@ public class TurretController : NetworkBehaviour
     {
         base.OnStartServer();
         StartCoroutine(FindNearestTargetWithinRangeWithDelay(0.2f));
+        
     }
 
     private void Update()
@@ -43,9 +41,9 @@ public class TurretController : NetworkBehaviour
     }
     private void RotateToTarget()
     {
-        if (nearestTarget != null && canRotate)
+        if (nearestTarget != null && turretSO.rotationSpeed > 0)
         {
-            UtilsClass.RotateToTarget(turretHead, nearestTarget, rotationSpeed, 0, false);
+            UtilsClass.RotateToTarget(turretHead, nearestTarget, turretSO.rotationSpeed, 0, false);
         }
 
 
@@ -57,7 +55,7 @@ public class TurretController : NetworkBehaviour
         if (nearestTarget == null) { return; }
         if (Time.time >= shootTimer)
         {
-            shootTimer = Time.time + shootDelay;
+            shootTimer = Time.time + turretSO.shootDelay;
             nearestTargetPos = nearestTarget.position;
             ShootRPC();
         }
@@ -67,11 +65,11 @@ public class TurretController : NetworkBehaviour
     {
         while (true)
         {
-            Collider[] targetsInViewRadius = Physics.OverlapSphere(turretHead.position, range, targetMask);
+            Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, turretSO.attackRadius, turretSO.targetLayer);
 
             if (nearestTarget != null)
             {
-                if (Vector3.Distance(nearestTarget.position, turretHead.position) > range)
+                if (Vector3.Distance(nearestTarget.position, transform.position) > turretSO.attackRadius)
                 {
                     nearestTarget = null;
                 }
@@ -85,8 +83,8 @@ public class TurretController : NetworkBehaviour
 
                     for (int i = 0; i < targetsInViewRadius.Length; i++)
                     {
-                        float distance = Vector3.Distance(turretHead.position, targetsInViewRadius[i].transform.position);
-                        if (distance < Vector3.Distance(turretHead.position, closest.position))
+                        float distance = Vector3.Distance(transform.position, targetsInViewRadius[i].transform.position);
+                        if (distance < Vector3.Distance(transform.position, closest.position))
                         {
                             closest = targetsInViewRadius[i].transform;
                         }
@@ -103,9 +101,8 @@ public class TurretController : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void ShootRPC()
     {
-
         Debug.Log("Shooting");
-        GameObject projectile = Instantiate(projectilePrefab, turretHead.position, Quaternion.identity, null);
+        GameObject projectile = Instantiate(turretSO.projectilePrefab, turretHead.position, Quaternion.identity, null);
 
         Spawn(projectile);
         projectile.GetComponent<ProjectileController>().SetupProjectile(nearestTargetPos);
@@ -114,8 +111,12 @@ public class TurretController : NetworkBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, range);
+        if (turretSO != null)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(transform.position, turretSO.attackRadius);
+
+        }
 
 
     }
