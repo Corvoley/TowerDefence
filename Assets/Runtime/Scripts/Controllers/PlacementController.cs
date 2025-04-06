@@ -10,6 +10,7 @@ public class PlacementController : MonoBehaviour
 
     [SerializeField] private PlaceableSO objBeingPlaced;
     [SerializeField] private Image placementImage;
+    [SerializeField] private GameObject objGhost;
 
     [SerializeField] private Color validColor;
     [SerializeField] private Color invalidColor;
@@ -19,13 +20,20 @@ public class PlacementController : MonoBehaviour
     [SerializeField] private float radius;
 
     [SerializeField] private bool drawGizmos;
-
+    private PlayerInputActions playerInputActions;
 
     private Camera maincCamera;
 
     private void Awake()
     {
         maincCamera = Camera.main;
+        playerInputActions = new PlayerInputActions();
+        playerInputActions.Player.Enable();
+    }
+    private void OnDisable()
+    {
+        playerInputActions.Player.Disable();
+
     }
 
     private void Update()
@@ -44,6 +52,11 @@ public class PlacementController : MonoBehaviour
             if (success)
             {
                 placementImage.canvas.transform.position = position;
+                if (objGhost != null)
+                {
+                    objGhost.transform.position = position;
+                    RotateGhost();
+                }
                 if (IsPositionValid(position, placementImage.rectTransform.rect.width / 2))
                 {
                     placementImage.color = validColor;
@@ -63,7 +76,7 @@ public class PlacementController : MonoBehaviour
         (bool success, Vector3 position) = UtilsClass.GetMouseWorldPosition(groundMask);
         if (success && IsPositionValid(position, placeableSO.placementRadius))
         {           
-            GameManager.Instance.SpawnPlaceable(placeableSO, position);
+            GameManager.Instance.SpawnPlaceable(placeableSO, position, objGhost.transform.rotation);
             SetObjToPlace(null);
         }
     }
@@ -76,18 +89,34 @@ public class PlacementController : MonoBehaviour
             placementImage.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, placeableSO.placementRadius * 2);
             placementImage.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, placeableSO.placementRadius * 2);
             placementImage.gameObject.SetActive(true);
+
+            if (objGhost == null)
+            {             
+                objGhost = Instantiate(objBeingPlaced.objPrefab.transform.Find("Model").gameObject);
+            }
+            
         } 
         else 
         { 
+            Destroy(objGhost);
             placementImage.gameObject.SetActive(false);
         }
 
     }
     private bool IsPositionValid(Vector3 pos, float radius)
     {
+        
         return !Physics.CheckSphere(pos, radius, invalidMask);
     }
 
+
+    private void RotateGhost()
+    {
+        if (objGhost != null)
+        {
+            objGhost.transform.Rotate(Vector3.up * 10 * playerInputActions.Player.RotateBuilding.ReadValue<Vector2>().normalized.y);
+        }
+    }
     private void OnDrawGizmos()
     {
         if (drawGizmos)

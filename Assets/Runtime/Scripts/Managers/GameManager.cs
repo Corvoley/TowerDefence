@@ -89,9 +89,10 @@ public class GameManager : NetworkBehaviour
         SpawnResourcesTask(resourceNodeOS, spawnPos);
     }
     [ServerRpc(RequireOwnership = false)]
-    public void SpawnPlaceable(PlaceableSO placeable, Vector3 position)
+    public void SpawnPlaceable(PlaceableSO placeable, Vector3 position, Quaternion rotation )
     {
-        var obj = Instantiate(placeable.objPrefab, position, Quaternion.identity, null);
+        var obj = Instantiate(placeable.objPrefab, position, rotation, null);
+        
         Spawn(obj);
     }
 
@@ -102,7 +103,7 @@ public class GameManager : NetworkBehaviour
         for (int i = 0; i < randomAmount; i++)
         {
             var randomPosOffset = Random.insideUnitSphere;
-            GameObject resource = Instantiate(resourceNodeOS.resourceToDrop.prefab, spawnPos + randomPosOffset, Quaternion.identity, null);
+            GameObject resource = Instantiate(resourceNodeOS.resourceToDrop.prefab, spawnPos +(Vector3.up * 2) + randomPosOffset, Random.rotation, null);
             Spawn(resource);
             
         }

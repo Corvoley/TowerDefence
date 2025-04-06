@@ -66,11 +66,11 @@ GameObject:
   - component: {fileID: 477184}
   - component: {fileID: 3314124}
   - component: {fileID: 2343666}
-  - component: {fileID: 7743640156428575373}
+  - component: {fileID: 1813610803268095066}
   - component: {fileID: 115019648923601845}
+  - component: {fileID: 7743640156428575373}
   - component: {fileID: 8555514892779626}
   - component: {fileID: 553876848392969453}
-  - component: {fileID: 1813610803268095066}
   m_Layer: 10
   m_Name: Wood
   m_TagString: Untagged
@@ -147,29 +147,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &7743640156428575373
-CapsuleCollider:
+--- !u!114 &1813610803268095066
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 160530}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.17684396
-  m_Height: 2.0379338
-  m_Direction: 0
-  m_Center: {x: 0, y: 0.22, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d063f18dbc995bd4ab40a24cde5301d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSO: {fileID: 11400000, guid: 579007f3655d3f74aa62cbd3d83e5cf6, type: 2}
 --- !u!54 &115019648923601845
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -197,6 +187,29 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!136 &7743640156428575373
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 160530}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.17684396
+  m_Height: 2.0379338
+  m_Direction: 0
+  m_Center: {x: 0, y: 0.22, z: 0}
 --- !u!114 &8555514892779626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -283,7 +296,7 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 1
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 4
+  <PrefabId>k__BackingField: 7
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 13622761714194099280
   <SceneId>k__BackingField: 0
@@ -292,16 +305,3 @@ MonoBehaviour:
     Rotation: {x: 0, y: 0, z: 0, w: 1}
     Scale: {x: 1.5, y: 1.5, z: 1.5}
     IsValid: 1
---- !u!114 &1813610803268095066
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 160530}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d063f18dbc995bd4ab40a24cde5301d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: 579007f3655d3f74aa62cbd3d83e5cf6, type: 2}

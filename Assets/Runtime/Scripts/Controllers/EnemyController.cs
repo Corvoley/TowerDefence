@@ -51,7 +51,7 @@ public class EnemyController : NetworkBehaviour
 
     public EnemyAIState currentEnemyState;
 
-   
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -214,13 +214,22 @@ public class EnemyController : NetworkBehaviour
 
     private void ModelDirectionHandler()
     {
-        if (agent.velocity == Vector3.zero)
-        {
-            return;
-        }
+        
         if (model.transform != null)
         {
-            model.transform.rotation = Quaternion.Slerp(model.transform.rotation, Quaternion.LookRotation(currentEnemyState != EnemyAIState.Attacking ? agent.velocity.normalized : currentTarget.position - transform.position), Time.deltaTime * rotationSpeed);
+            if (currentEnemyState == EnemyAIState.Attacking)
+            {
+                UtilsClass.RotateToTarget(model.transform, currentTarget, rotationSpeed, 0, false);
+            }
+            else
+            {
+                if (agent.velocity == Vector3.zero)
+                {
+                    return;
+                }
+                model.transform.rotation = Quaternion.Slerp(model.transform.rotation, Quaternion.LookRotation(agent.velocity.normalized), Time.deltaTime * rotationSpeed);
+            }
+
         }
     }
 

@@ -17,7 +17,7 @@ public class DealDamage : MonoBehaviour
         if (other == null) return;
         if (CanFriendlyFire)
         {
-            HealthController healthController = other.GetComponent<HealthController>();
+            HealthController healthController = other.GetComponentInParent<HealthController>();
             if (healthController != null)
             {
                 healthController.DealDamage(damage);
@@ -29,7 +29,7 @@ public class DealDamage : MonoBehaviour
         {
             if (nameTag != other.transform.root.tag)
             {
-                HealthController healthController = other.GetComponent<HealthController>();
+                HealthController healthController = other.GetComponentInParent<HealthController>();
                 if (healthController != null)
                 {
                     healthController.DealDamage(damage);
