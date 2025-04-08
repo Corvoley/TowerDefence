@@ -1854,14 +1854,17 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 64
+  interactMask:
+    serializedVersion: 2
+    m_Bits: 4096
   rb: {fileID: -5759660471522862659}
   movementSpeed: 100
   rotationSpeed: 20
   modelObj: {fileID: 1541610030938574282}
   worldCanvasObj: {fileID: 6920561828076516056}
   mainCanvasObj: {fileID: 4367290657833466975}
-  playerClientManagerRef: {fileID: 0}
   usernameText: {fileID: 8246334067060073583}
+  playerClientManagerRef: {fileID: 0}
   attackCooldown: 0.5
   attackSpeedMultiplier: 1.5
   attackStartPercent: 0.5
@@ -1869,6 +1872,7 @@ MonoBehaviour:
   weaponCollider: {fileID: 3729827571567914279}
   particle: {fileID: 7572105992166790488}
   cameraYOffset: 45
+  interactRange: 10
 --- !u!114 &4360938233658420925
 MonoBehaviour:
   m_ObjectHideFlags: 0

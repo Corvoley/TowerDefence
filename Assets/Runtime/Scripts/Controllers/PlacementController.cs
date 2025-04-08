@@ -4,11 +4,10 @@ using UnityEngine.UI;
 
 public class PlacementController : MonoBehaviour
 {
-    [SerializeField] private PlaceableSO objToPlace;
-
-
+    [SerializeField] private PlaceableSO objToPlace;   
 
     [SerializeField] private PlaceableSO objBeingPlaced;
+
     [SerializeField] private Image placementImage;
     [SerializeField] private GameObject objGhost;
 
@@ -48,7 +47,7 @@ public class PlacementController : MonoBehaviour
         }
         if (placementImage.gameObject.activeInHierarchy)
         {
-            (bool success, Vector3 position) = UtilsClass.GetMouseWorldPosition(groundMask);
+            (bool success, Vector3 position, RaycastHit hitInfo) = UtilsClass.GetMouseWorldPosition(groundMask);
             if (success)
             {
                 placementImage.canvas.transform.position = position;
@@ -73,10 +72,10 @@ public class PlacementController : MonoBehaviour
     private void PlaceObject(PlaceableSO placeableSO)
     {
         if (placeableSO == null) return;
-        (bool success, Vector3 position) = UtilsClass.GetMouseWorldPosition(groundMask);
+        (bool success, Vector3 position, RaycastHit hitInfo) = UtilsClass.GetMouseWorldPosition(groundMask);
         if (success && IsPositionValid(position, placeableSO.placementRadius))
         {           
-            GameManager.Instance.SpawnPlaceable(placeableSO, position, objGhost.transform.rotation);
+            GameManager.Instance.SpawnConstructionSpot(placeableSO, position, objGhost.transform.rotation);
             SetObjToPlace(null);
         }
     }

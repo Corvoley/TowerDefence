@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: pl_ConstructionSpot
   m_EditorClassIdentifier: 
   objName: Construction Spot
-  objPrefab: {fileID: 0}
+  objPrefab: {fileID: 4844690996877885434, guid: 01d3aa0751ca8f741bec01a0b2a7851c, type: 3}
   placementRadius: 0

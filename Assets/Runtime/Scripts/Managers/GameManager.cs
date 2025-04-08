@@ -20,6 +20,8 @@ public class GameManager : NetworkBehaviour
     [SerializeField] public GameObject enemyPrefab;
     [SerializeField] public Button exitButton;
 
+    [SerializeField] private PlaceableSO constructionObj;
+
     [SerializeField] public List<Transform> enemiesTransformList = new List<Transform>();
 
     [AllowMutableSyncType]
@@ -89,10 +91,16 @@ public class GameManager : NetworkBehaviour
         SpawnResourcesTask(resourceNodeOS, spawnPos);
     }
     [ServerRpc(RequireOwnership = false)]
-    public void SpawnPlaceable(PlaceableSO placeable, Vector3 position, Quaternion rotation )
+    public void SpawnConstructionSpot(PlaceableSO placeable, Vector3 position, Quaternion rotation )
     {
-        var obj = Instantiate(placeable.objPrefab, position, rotation, null);
-        
+        var obj = Instantiate(constructionObj.objPrefab, position, rotation, null);
+        obj.GetComponent<ConstructionController>().SetupConstruction(placeable);
+        Spawn(obj);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnPlaceable(PlaceableSO placeable, Vector3 position, Quaternion rotation)
+    {
+        var obj = Instantiate(placeable.objPrefab, position, rotation, null);       
         Spawn(obj);
     }
 

@@ -17,38 +17,47 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private NetworkAnimator networkAnimator;
 
+    [Header("Layer Masks")]
     [SerializeField] private LayerMask groundMask;
+    [SerializeField] private LayerMask interactMask;
 
-
+    [Header("Movement")]
     [SerializeField] private Rigidbody rb;
     [SerializeField] private float movementSpeed;
     [SerializeField] private float rotationSpeed;
 
+    [Header("Model")]
     [SerializeField] private GameObject modelObj;
     [SerializeField] private GameObject worldCanvasObj;
     [SerializeField] private GameObject mainCanvasObj;
+    [SerializeField] private TextMeshProUGUI usernameText;
     [SerializeField] public PlayerClientManager playerClientManagerRef;
 
-    [SerializeField] private TextMeshProUGUI usernameText;
 
+    [Header("Attack")]
     [SerializeField] private float attackCooldown;
     [SerializeField] private float attackSpeedMultiplier;
     [SerializeField] private float attackStartPercent;
     [SerializeField] private float attackDurationPercent;
     [SerializeField] private Collider weaponCollider;
     [SerializeField] private ParticleSystem particle;
+
+
     private float attackTimer;
     private float attackClipDuration;
-
-
     private Vector2 inputVector;
     private bool canRotate = true;
+
     private PlayerInputActions playerInputActions;
 
-    [SerializeField] private float cameraYOffset;
-
+    [Header("Camera")]
     private Camera mainCamera;
     private CinemachineCamera playerCamera;
+    [SerializeField] private float cameraYOffset;
+
+    [Header("Interaction")]
+    [SerializeField] private float interactRange;
+
 
     public override async void OnStartClient()
     {        
@@ -62,6 +71,7 @@ public class PlayerController : NetworkBehaviour
             playerInputActions = new PlayerInputActions();
             playerInputActions.Player.Enable();
             playerInputActions.Player.Attack.performed += Attack;
+            playerInputActions.Player.Interact.performed += Interact_performed;
             weaponCollider.enabled = false;
             
             await SetupPlayer();
@@ -72,6 +82,26 @@ public class PlayerController : NetworkBehaviour
             this.enabled = false;
         }
     }
+
+    private void Interact_performed(InputAction.CallbackContext obj)
+    {
+        
+        (bool success, Vector3 position, RaycastHit hitInfo) = UtilsClass.GetMouseWorldPosition(interactMask);
+        if (success)
+        {
+            if (Vector3.Distance(transform.position, position) <= interactRange)
+            {
+                IInteractable interactable = hitInfo.collider.gameObject.GetComponentInParent<IInteractable>();
+                if (interactable != null)
+                {
+                    interactable.OnInteract(this);
+                }
+                
+            }
+           
+        }
+    }
+
     public override void OnStopClient()
     {
         base.OnStopClient();
@@ -203,7 +233,7 @@ public class PlayerController : NetworkBehaviour
     private void RotateToMousePosition()
     {
         if (!canRotate) return;
-        (bool success, Vector3 position) = UtilsClass.GetMouseWorldPosition(groundMask);
+        (bool success, Vector3 position, RaycastHit hitInfo) = UtilsClass.GetMouseWorldPosition(groundMask);
         if (success)
         {
 

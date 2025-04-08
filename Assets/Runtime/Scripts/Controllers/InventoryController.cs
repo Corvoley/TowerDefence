@@ -29,6 +29,7 @@ public class InventoryController : NetworkBehaviour
         else
         {
             inventory = GetComponent<Inventory>();
+            inventory.OnInventoryChanged += UpdateInvUI;
         }
     }
 
@@ -57,7 +58,7 @@ public class InventoryController : NetworkBehaviour
             {
                 if (itemCollider.TryGetComponent(out item))
                 {
-                   InventoryUtils.AddItemToInventory(inventory,item.itemSO);
+                    InventoryUtils.AddItemToInventory(inventory, item.itemSO);
                     DespawnItemObjFromWorld(item.gameObject);
                 }
             }
@@ -67,28 +68,28 @@ public class InventoryController : NetworkBehaviour
 
     private void DropItem(ItemSO itemSO)
     {
-        foreach (Inventory.InventoryObject invObj in inventory.inventoryObjects)
+        foreach (ItemAmount item in inventory.inventoryObjects)
         {
-            if (invObj.itemSO != itemSO)
+            if (item.itemSO != itemSO)
             {
                 continue;
             }
-            if (invObj.amount > 1)
+            if (item.amount > 1)
             {
-                invObj.amount--;
-                SpawnItemObjIntoWorld(invObj.itemSO.prefab);
+                item.amount--;
+                SpawnItemObjIntoWorld(item.itemSO.prefab);
                 UpdateInvUI();
                 return;
             }
-            if (invObj.amount <= 1)
+            if (item.amount <= 1)
             {
-                inventory.inventoryObjects.Remove(invObj);
-                SpawnItemObjIntoWorld(invObj.itemSO.prefab);
+                inventory.inventoryObjects.Remove(item);
+                SpawnItemObjIntoWorld(item.itemSO.prefab);
                 UpdateInvUI();
                 return;
             }
         }
-        
+
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -103,7 +104,7 @@ public class InventoryController : NetworkBehaviour
     {
         ServerManager.Despawn(objToDespawn, DespawnType.Destroy);
     }
- 
+
     private void ToggleInventory()
     {
         inventoryPanel.SetActive(!inventoryPanel.activeSelf);
@@ -117,12 +118,12 @@ public class InventoryController : NetworkBehaviour
             Destroy(child.gameObject);
         }
 
-        foreach (Inventory.InventoryObject invObj in inventory.inventoryObjects)
+        foreach (ItemAmount item in inventory.inventoryObjects)
         {
             GameObject obj = Instantiate(itemTemplate, itemHolderTransform);
-            obj.transform.Find("name").GetComponent<TextMeshProUGUI>().text = invObj.itemSO.itemName.ToString();
-            obj.transform.Find("amount").GetComponent<TextMeshProUGUI>().text = invObj.amount.ToString();
-            obj.transform.GetComponent<Button>().onClick.AddListener(() => { DropItem(invObj.itemSO);});
+            obj.transform.Find("name").GetComponent<TextMeshProUGUI>().text = item.itemSO.itemName.ToString();
+            obj.transform.Find("amount").GetComponent<TextMeshProUGUI>().text = item.amount.ToString();
+            obj.transform.GetComponent<Button>().onClick.AddListener(() => { DropItem(item.itemSO); });
         }
     }
     private void OnDrawGizmos()

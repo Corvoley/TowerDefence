@@ -1,32 +1,40 @@
+using System;
 using UnityEngine;
 
 public static class InventoryUtils
 {
     public static void AddItemToInventory(Inventory inventory, ItemSO newItemSO)
     {
-        foreach (Inventory.InventoryObject invObj in inventory.inventoryObjects)
+        foreach (ItemAmount item in inventory.inventoryObjects)
         {
-            if (invObj.itemSO == newItemSO)
+            if (item.itemSO.itemName == newItemSO.itemName)
             {
-                invObj.amount++;
+                item.amount++;
                 return;
             }
         }
-        inventory.inventoryObjects.Add(new Inventory.InventoryObject() { itemSO = newItemSO, amount = 1 });
+        inventory.inventoryObjects.Add(new ItemAmount { itemSO = newItemSO, amount = 1 });
     }
-    public static void RemoveItemFromInventory(Inventory inventory, ItemSO newItemSO)
+    public static void RemoveItemFromInventory(Inventory inventory, ItemSO newItemSO, Action<bool> result)
     {
-        foreach (Inventory.InventoryObject invObj in inventory.inventoryObjects)
+        foreach (ItemAmount item in inventory.inventoryObjects)
         {
-            if (invObj.itemSO == newItemSO)
+            if (item.itemSO.itemName == newItemSO.itemName)
             {
-                invObj.amount--;
-                if (invObj.amount <= 0)
+                item.amount--;
+                if (item.amount <= 0)
                 {
-                    inventory.inventoryObjects.Remove(invObj);
+                    inventory.inventoryObjects.Remove(item);
                 }
+
+                //Debug.Log($"Resource removed");
+                result(true);
+                inventory.OnInventoryChanged?.Invoke();
                 return;
             }
+
+            //Debug.Log("Resource not removed");
+            result(false);
         }
 
     }

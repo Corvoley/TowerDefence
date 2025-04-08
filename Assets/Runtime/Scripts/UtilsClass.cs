@@ -29,22 +29,22 @@ public static class UtilsClass
          Quaternion rotation = Quaternion.RotateTowards(transformToRotate.rotation, targetRotation, rotateSpeed > 0 ? rotateSpeed * Time.deltaTime : 10000);
          transformToRotate.SetPositionAndRotation(transformToRotate.position, rotation);
      }*/
-    public static (bool success, Vector3 position) GetMouseWorldPosition(LayerMask layer)
+    public static (bool success, Vector3 position, RaycastHit hitInfo) GetMouseWorldPosition(LayerMask layer)
     {
         if (mainCamera == null) mainCamera = Camera.main;
-        if (mainCamera == null) return (false, Vector3.zero);
+        if (mainCamera == null) return (false, Vector3.zero, default);
 
         var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
         if (Physics.Raycast(ray, out var hitInfo, Mathf.Infinity, layer))
         {
             // The Raycast hit something, return with the position.
-            return (success: true, position: hitInfo.point);
+            return (success: true, position: hitInfo.point, hitInfo);
         }
         else
         {
             // The Raycast did not hit anything.
-            return (success: false, position: Vector3.zero);
+            return (success: false, position: Vector3.zero, default);
         }
     }
     public static void RotateToTarget(Transform transformToRotate,

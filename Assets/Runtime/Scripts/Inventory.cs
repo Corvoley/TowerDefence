@@ -5,13 +5,9 @@ using UnityEngine;
 
 public class Inventory : NetworkBehaviour
 {
-    public List<InventoryObject> inventoryObjects = new List<InventoryObject>();
+    public Action OnInventoryChanged;
+    public List<ItemAmount> inventoryObjects = new List<ItemAmount>();
 
-    [Serializable]
-    public class InventoryObject
-    {
-        public ItemSO itemSO;
-        public int amount;
-    }
+    
 
 }

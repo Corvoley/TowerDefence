@@ -11,8 +11,6 @@ public class TurretSO : PlaceableSO
     public LayerMask targetLayer;
     public float attackRadius;
     public float rotationSpeed;
-    public float shootDelay;
-
-    public List<ItemAmount> constructionResourceList;
+    public float shootDelay;    
 
 }
