@@ -15,6 +15,9 @@ MonoBehaviour:
   objName: Tower
   objPrefab: {fileID: 2413798206556020653, guid: f98d594aefabfee4d8379131d70f41a0, type: 3}
   placementRadius: 10
+  constructionResourceList:
+  - itemSO: {fileID: 11400000, guid: 579007f3655d3f74aa62cbd3d83e5cf6, type: 2}
+    amount: 5
   projectilePrefab: {fileID: 7803696572511370594, guid: a8fd9e84d912f8e42a2c0baae1719ef7, type: 3}
   targetLayer:
     serializedVersion: 2
@@ -22,8 +25,3 @@ MonoBehaviour:
   attackRadius: 20
   rotationSpeed: 100
   shootDelay: 1
-  constructionResourceList:
-  - itemSO: {fileID: 11400000, guid: 579007f3655d3f74aa62cbd3d83e5cf6, type: 2}
-    amount: 10
-  - itemSO: {fileID: 11400000, guid: 09047367ba562124194b9f2c3b56133c, type: 2}
-    amount: 10

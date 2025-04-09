@@ -877,6 +877,7 @@ MonoBehaviour:
   baseTransform: {fileID: 1099209636}
   enemyPrefab: {fileID: 6103732200358392907, guid: 877cd56516d879142b58111c4cde0452, type: 3}
   exitButton: {fileID: 0}
+  constructionObj: {fileID: 11400000, guid: 9dd4c41cabad7d643b78def1d819bf26, type: 2}
   enemiesTransformList: []
   alliesNetworkObjectList:
     NetworkManager: {fileID: 0}
@@ -1988,6 +1989,7 @@ MonoBehaviour:
   objToPlace: {fileID: 11400000, guid: 992cc4bdf22b45a44a7e753a75d78113, type: 2}
   objBeingPlaced: {fileID: 0}
   placementImage: {fileID: 1517302877}
+  objGhost: {fileID: 0}
   validColor: {r: 1, g: 1, b: 1, a: 0.19607843}
   invalidColor: {r: 1, g: 0, b: 0, a: 0.19607843}
   groundMask:

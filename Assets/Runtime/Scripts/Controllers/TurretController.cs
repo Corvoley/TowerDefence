@@ -3,13 +3,14 @@ using System.Collections;
 using System.Threading;
 using UnityEngine;
 
-public class TurretController : NetworkBehaviour
+public class TurretController : NetworkBehaviour, IConstructable
 {
     [SerializeField] private Transform nearestTarget;
     [SerializeField] private Transform turretHead;
     [SerializeField] private Canvas placementCanvas;
 
     [SerializeField] private TurretSO turretSO;
+    [SerializeField] private Material transparentMat;
        
     [SerializeField] private bool canShoot;
 
@@ -17,6 +18,10 @@ public class TurretController : NetworkBehaviour
     private Vector3 nearestTargetPos;
 
     private HealthController healthController;
+
+    public PlaceableSO PlaceableToConstruct  => turretSO;
+    public Transform ModelTransform => gameObject.transform.Find("Model");
+    public Material TransparentMaterial => transparentMat;
 
     private void Awake()
     {
@@ -119,5 +124,11 @@ public class TurretController : NetworkBehaviour
         }
 
 
+    }
+
+    public void OnConstructionFinished()
+    {
+
+        Debug.Log("Tower Fineshed");
     }
 }

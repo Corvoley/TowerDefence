@@ -75,7 +75,7 @@ public class PlacementController : MonoBehaviour
         (bool success, Vector3 position, RaycastHit hitInfo) = UtilsClass.GetMouseWorldPosition(groundMask);
         if (success && IsPositionValid(position, placeableSO.placementRadius))
         {           
-            GameManager.Instance.SpawnConstructionSpot(placeableSO, position, objGhost.transform.rotation);
+            GameManager.Instance.SpawnPlaceable(placeableSO, position, objGhost.transform.rotation);
             SetObjToPlace(null);
         }
     }

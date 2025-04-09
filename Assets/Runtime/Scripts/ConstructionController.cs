@@ -1,17 +1,38 @@
+using FishNet.Object;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class ConstructionController : MonoBehaviour, IInteractable
+[RequireComponent(typeof(Inventory))]
+public class ConstructionController : NetworkBehaviour, IInteractable
 {
-    [SerializeField] private PlaceableSO objToPlace;
     [SerializeField] private Inventory inventory;
+
+    [SerializeField] private IConstructable iConstructable;
+
+    [SerializeField] private List<MeshRenderer> meshRendererList = new List<MeshRenderer>();
+    [SerializeField] private Material originalMat;
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        inventory = GetComponent<Inventory>();
+        iConstructable = GetComponent<IConstructable>();
+        SetupConstruction(iConstructable.PlaceableToConstruct);
+    }
 
     public void SetupConstruction(PlaceableSO objToPlace)
     {
-        this.objToPlace = objToPlace;
-        inventory.inventoryObjects = objToPlace.constructionResourceList;
-    }
+        inventory.inventoryObjects = objToPlace.constructionResourceList.Select(item => new ItemAmount{ itemSO = item.itemSO, amount = item.amount}).ToList(); ;
+        meshRendererList = iConstructable.ModelTransform.GetComponentsInChildren<MeshRenderer>().ToList();
+        originalMat = meshRendererList[0].material;
 
+        foreach (MeshRenderer meshRenderer in meshRendererList)
+        {
+            meshRenderer.sharedMaterial = iConstructable.TransparentMaterial;
+        }
+    }
+    [ServerRpc(RequireOwnership = false)]
     private void AddResourceToSpot(PlayerController playerController)
     {
         if (inventory.inventoryObjects.Count <= 0)
@@ -29,7 +50,7 @@ public class ConstructionController : MonoBehaviour, IInteractable
                 {
                     FinishContruction();
                 }
-                
+
             }
 
         });
@@ -40,12 +61,19 @@ public class ConstructionController : MonoBehaviour, IInteractable
         return inventory.inventoryObjects.Count <= 0;
     }
 
+    [ServerRpc(RequireOwnership = false)]
     private void FinishContruction()
     {
-        GameManager.Instance.SpawnPlaceable(objToPlace, transform.position, transform.rotation);
-        GameManager.Instance.Despawn(gameObject);
+        iConstructable.OnConstructionFinished();
+        foreach (MeshRenderer meshRenderer in meshRendererList)
+        {
+            meshRenderer.sharedMaterial = originalMat;
+        }
+        Destroy(this);
+        Destroy(inventory);
     }
 
+    [ServerRpc(RequireOwnership = false)]
     public void OnInteract(PlayerController playerController)
     {
         AddResourceToSpot(playerController);

@@ -91,7 +91,7 @@ public class PlayerController : NetworkBehaviour
         {
             if (Vector3.Distance(transform.position, position) <= interactRange)
             {
-                IInteractable interactable = hitInfo.collider.gameObject.GetComponentInParent<IInteractable>();
+                IInteractable interactable = hitInfo.collider.gameObject.GetComponentInParent<IInteractable>();               
                 if (interactable != null)
                 {
                     interactable.OnInteract(this);

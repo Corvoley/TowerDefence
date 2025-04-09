@@ -90,13 +90,7 @@ public class GameManager : NetworkBehaviour
     {
         SpawnResourcesTask(resourceNodeOS, spawnPos);
     }
-    [ServerRpc(RequireOwnership = false)]
-    public void SpawnConstructionSpot(PlaceableSO placeable, Vector3 position, Quaternion rotation )
-    {
-        var obj = Instantiate(constructionObj.objPrefab, position, rotation, null);
-        obj.GetComponent<ConstructionController>().SetupConstruction(placeable);
-        Spawn(obj);
-    }
+
     [ServerRpc(RequireOwnership = false)]
     public void SpawnPlaceable(PlaceableSO placeable, Vector3 position, Quaternion rotation)
     {

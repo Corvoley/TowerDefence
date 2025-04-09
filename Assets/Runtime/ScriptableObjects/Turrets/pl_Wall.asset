@@ -15,3 +15,6 @@ MonoBehaviour:
   objName: Wall
   objPrefab: {fileID: 96459539756252222, guid: b1e4dd3398c7bbd42b6e739e33e9b748, type: 3}
   placementRadius: 7
+  constructionResourceList:
+  - itemSO: {fileID: 11400000, guid: 579007f3655d3f74aa62cbd3d83e5cf6, type: 2}
+    amount: 2
