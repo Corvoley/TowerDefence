@@ -10,7 +10,7 @@ public class ConstructionController : NetworkBehaviour, IInteractable
 
     [SerializeField] private IConstructable iConstructable;
 
-    [SerializeField] private List<MeshRenderer> meshRendererList = new List<MeshRenderer>();
+    [SerializeField] private List<MeshRenderer> meshRendererList = new List<MeshRenderer>(); 
     [SerializeField] private Material originalMat;
 
     public override void OnStartClient()
@@ -26,6 +26,7 @@ public class ConstructionController : NetworkBehaviour, IInteractable
         inventory.inventoryObjects = objToPlace.constructionResourceList.Select(item => new ItemAmount{ itemSO = item.itemSO, amount = item.amount}).ToList(); ;
         meshRendererList = iConstructable.ModelTransform.GetComponentsInChildren<MeshRenderer>().ToList();
         originalMat = meshRendererList[0].material;
+        iConstructable.MainCollider.isTrigger = true;
 
         foreach (MeshRenderer meshRenderer in meshRendererList)
         {
@@ -65,10 +66,12 @@ public class ConstructionController : NetworkBehaviour, IInteractable
     private void FinishContruction()
     {
         iConstructable.OnConstructionFinished();
+        iConstructable.MainCollider.isTrigger = false;
         foreach (MeshRenderer meshRenderer in meshRendererList)
         {
             meshRenderer.sharedMaterial = originalMat;
         }
+
         Destroy(this);
         Destroy(inventory);
     }

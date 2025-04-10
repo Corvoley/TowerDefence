@@ -816,6 +816,7 @@ MonoBehaviour:
   attackStartPercent: 0.5
   attackDurationPercent: 0.5
   weaponCollider: {fileID: 1341170114171743862}
+  targetType: 2
   attackClipDuration: 0
   refreshRateAI: 0.2
   currentEnemyState: 0
@@ -963,7 +964,7 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 6
+  <PrefabId>k__BackingField: 10
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 15996431029844006718
   <SceneId>k__BackingField: 0

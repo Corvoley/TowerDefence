@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 
 
-public class PlayerController : NetworkBehaviour
+public class PlayerController : NetworkBehaviour, IEnemyTarget
 {
 
     public Action OnSetupFinished;
@@ -58,6 +58,9 @@ public class PlayerController : NetworkBehaviour
     [Header("Interaction")]
     [SerializeField] private float interactRange;
 
+    public IEnemyTarget.TargetType Type => IEnemyTarget.TargetType.Player;
+
+    public bool IsActive => true;
 
     public override async void OnStartClient()
     {        
@@ -120,8 +123,7 @@ public class PlayerController : NetworkBehaviour
 
         playerCamera.Follow = transform;
         playerCamera.transform.position = Vector3.zero;
-        //playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + cameraYOffset, playerCamera.transform.position.z);
-        //playerCamera.transform.SetParent(transform);
+
 
         while (!GameManager.Instance.alliesNetworkObjectList.Contains(this.NetworkObject))
         {

@@ -2,13 +2,10 @@ using FishNet.Component.Animating;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.InputSystem;
 
 [Serializable]
 public enum EnemyAIState
@@ -35,6 +32,7 @@ public class EnemyController : NetworkBehaviour
     [SerializeField] private float attackDurationPercent;
     [SerializeField] private Collider weaponCollider;
     private float attackTimer;
+    [SerializeField] private IEnemyTarget.TargetType targetType;
     [SerializeField] private float attackClipDuration;
 
 
@@ -105,8 +103,6 @@ public class EnemyController : NetworkBehaviour
             }
             timerAI = Time.time + refreshRateAI;
         }
-
-
     }
     private void FillAttackAnimationInfo()
     {
@@ -118,8 +114,6 @@ public class EnemyController : NetworkBehaviour
                 attackClipDuration = clip.length;
             }
         }
-
-
     }
     private void AttackingStateHandler()
     {
@@ -198,13 +192,17 @@ public class EnemyController : NetworkBehaviour
 
         for (int i = 0; i < targetList.Count; i++)
         {
-            float distance = Vector3.Distance(transform.position, targetList[i].transform.position);
-            if (distance <= aggroDistance)
+            var target = targetList[i].GetComponent<IEnemyTarget>();
+            if (targetType.HasFlag(target.Type) && target.IsActive)
             {
-                if (distance < closestDistance)
+                float distance = Vector3.Distance(transform.position, targetList[i].transform.position);
+                if (distance <= aggroDistance)
                 {
-                    closestDistance = distance;
-                    closestTarget = targetList[i].transform;
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestTarget = targetList[i].transform;
+                    }
                 }
             }
 
@@ -214,7 +212,7 @@ public class EnemyController : NetworkBehaviour
 
     private void ModelDirectionHandler()
     {
-        
+
         if (model.transform != null)
         {
             if (currentEnemyState == EnemyAIState.Attacking)

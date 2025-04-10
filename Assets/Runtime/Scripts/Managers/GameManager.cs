@@ -96,6 +96,7 @@ public class GameManager : NetworkBehaviour
     {
         var obj = Instantiate(placeable.objPrefab, position, rotation, null);       
         Spawn(obj);
+        AddPlayerToAlliesList(obj.GetComponent<NetworkObject>());
     }
 
     private async void SpawnResourcesTask(ResourceNodeOS resourceNodeOS, Vector3 spawnPos)

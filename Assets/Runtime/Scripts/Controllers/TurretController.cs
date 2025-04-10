@@ -3,7 +3,7 @@ using System.Collections;
 using System.Threading;
 using UnityEngine;
 
-public class TurretController : NetworkBehaviour, IConstructable
+public class TurretController : NetworkBehaviour, IConstructable, IEnemyTarget
 {
     [SerializeField] private Transform nearestTarget;
     [SerializeField] private Transform turretHead;
@@ -11,17 +11,25 @@ public class TurretController : NetworkBehaviour, IConstructable
 
     [SerializeField] private TurretSO turretSO;
     [SerializeField] private Material transparentMat;
-       
+    [SerializeField] private Collider mainCollider;
+
     [SerializeField] private bool canShoot;
+
+    [SerializeField] private bool isActive = false;
 
     private float shootTimer;
     private Vector3 nearestTargetPos;
 
     private HealthController healthController;
 
-    public PlaceableSO PlaceableToConstruct  => turretSO;
+    public PlaceableSO PlaceableToConstruct => turretSO;
     public Transform ModelTransform => gameObject.transform.Find("Model");
     public Material TransparentMaterial => transparentMat;
+
+    public Collider MainCollider => mainCollider;
+    public IEnemyTarget.TargetType Type => IEnemyTarget.TargetType.Tower;
+
+    public bool IsActive => isActive;
 
     private void Awake()
     {
@@ -36,13 +44,16 @@ public class TurretController : NetworkBehaviour, IConstructable
     {
         base.OnStartServer();
         StartCoroutine(FindNearestTargetWithinRangeWithDelay(0.2f));
-        
+
     }
 
     private void Update()
     {
-        RotateToTarget();
-        Shoot();
+        if (isActive)
+        {
+            RotateToTarget();
+            Shoot();
+        }
     }
     private void RotateToTarget()
     {
@@ -128,7 +139,6 @@ public class TurretController : NetworkBehaviour, IConstructable
 
     public void OnConstructionFinished()
     {
-
-        Debug.Log("Tower Fineshed");
+        isActive = true;
     }
 }

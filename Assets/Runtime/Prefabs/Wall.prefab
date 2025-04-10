@@ -11,6 +11,9 @@ GameObject:
   - component: {fileID: 6556528652701665856}
   - component: {fileID: 7595066321729711030}
   - component: {fileID: 6715511900250126735}
+  - component: {fileID: 9195904634589332074}
+  - component: {fileID: 8776011275393284251}
+  - component: {fileID: 3670456860138627844}
   m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
@@ -102,6 +105,57 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 7595066321729711030}
   _networkObjectCache: {fileID: 7595066321729711030}
+--- !u!114 &9195904634589332074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96459539756252222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f070a905c5eacbd4fb614246dd2c5788, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  placeableToConstruct: {fileID: 11400000, guid: c813b7e61c62fa842bb8ffd091e9910b, type: 2}
+  modelTransform: {fileID: 1974550850386181295}
+  mainCollider: {fileID: 3272887385955322745}
+  transparentMaterial: {fileID: 2100000, guid: ccbebecd73589c74c869091287bcc182, type: 2}
+  navMeshObstacle: {fileID: 3189841703492694576}
+--- !u!114 &8776011275393284251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96459539756252222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 037800b95f2b7a7449467d621d754a7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 7595066321729711030}
+  _networkObjectCache: {fileID: 0}
+  inventoryObjects: []
+--- !u!114 &3670456860138627844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96459539756252222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61ef7ad0dd6e0ab43a11a95606885325, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 7595066321729711030}
+  _networkObjectCache: {fileID: 0}
+  inventory: {fileID: 0}
+  meshRendererList: []
+  originalMat: {fileID: 0}
 --- !u!1 &1316050978220404074
 GameObject:
   m_ObjectHideFlags: 0
@@ -195,7 +249,7 @@ NavMeshObstacle:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6798652547664138531}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Shape: 1
   m_Extents: {x: 6, y: 0.5, z: 0.5}

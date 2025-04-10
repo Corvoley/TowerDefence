@@ -487,6 +487,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4482042599857880394}
     - target: {fileID: 328487462163145866, guid: 6e5f5e36d455e07409146718695b7fb1, type: 3}
+      propertyPath: mainCollider
+      value: 
+      objectReference: {fileID: 8412630319734673850}
+    - target: {fileID: 328487462163145866, guid: 6e5f5e36d455e07409146718695b7fb1, type: 3}
       propertyPath: rotationSpeed
       value: 100
       objectReference: {fileID: 0}
@@ -508,7 +512,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1884974828233015845, guid: 6e5f5e36d455e07409146718695b7fb1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 16.233118
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1884974828233015845, guid: 6e5f5e36d455e07409146718695b7fb1, type: 3}
       propertyPath: m_LocalPosition.y
@@ -516,7 +520,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1884974828233015845, guid: 6e5f5e36d455e07409146718695b7fb1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 9.715126
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1884974828233015845, guid: 6e5f5e36d455e07409146718695b7fb1, type: 3}
       propertyPath: m_LocalRotation.w
@@ -650,8 +654,9 @@ MonoBehaviour:
   _componentIndexCache: 255
   _addedNetworkObject: {fileID: 1612917073290457834}
   _networkObjectCache: {fileID: 0}
-  objToPlace: {fileID: 0}
   inventory: {fileID: 0}
+  meshRendererList: []
+  originalMat: {fileID: 0}
 --- !u!4 &4482042599857880394 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5473592879963128021, guid: 6e5f5e36d455e07409146718695b7fb1, type: 3}

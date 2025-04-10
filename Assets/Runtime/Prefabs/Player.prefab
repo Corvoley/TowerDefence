@@ -1872,7 +1872,7 @@ MonoBehaviour:
   weaponCollider: {fileID: 3729827571567914279}
   particle: {fileID: 7572105992166790488}
   cameraYOffset: 45
-  interactRange: 10
+  interactRange: 20
 --- !u!114 &4360938233658420925
 MonoBehaviour:
   m_ObjectHideFlags: 0
